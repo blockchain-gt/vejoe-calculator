@@ -22,6 +22,8 @@
   flex-direction: column;
   border-radius: 20px;
   padding: 20px;
+
+  transition: 0.3s;
 }
 
 .card input,
@@ -40,4 +42,20 @@
 .card label {
   margin-top: 20px;
   margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.hidden {
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 0;
 }

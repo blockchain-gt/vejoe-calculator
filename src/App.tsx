@@ -11,15 +11,24 @@ function App() {
   const [veJoeShare, setVeJoeShare] = useState(); // editable number
   const [totalVeJoeSupply, setTotalVeJoeSupply] = useState(); // editable number
 
-  const [joePerSecond, setJoePerSecond] = useState(); // noneditable number, not shown
-  const [poolTotalFactor, setPoolTotalFactor] = useState(); // noneditable number, not shown
+  const [joePerSecond, setJoePerSecond] = useState<number>(); // noneditable number, not shown
+  const [poolTotalFactor, setPoolTotalFactor] = useState<number>(); // noneditable number, not shown
 
-  useEffect(() => {}, []);
+  const [baseAPR, setBaseAPR] = useState<number>();
+
+  const [cardShown, setCardShown] = useState<boolean>(false);
+
+  useEffect(() => {
+    setInterval(() => {
+      setCardShown(true);
+    }, 100);
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
-        <div className="card">
-          <h3>Title</h3>
+        <div className={`card ${cardShown ? "" : "hidden"}`}>
+          <h3>Lorem Ipsum Calculator</h3>
           <select
             name=""
             id="select"
