@@ -3,6 +3,7 @@ import "./App.css";
 import { useEffect, useState } from "react";
 
 function App() {
+  cosnt i = 0;
   const [lp, setLp] = useState<string>(); // dropdown, AVAX/USDC etc
   const [amount1, setAmount1] = useState<number>(); // editable, num
   const [amount2, setAmount2] = useState<number>(); // editable, num
