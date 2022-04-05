@@ -1,0 +1,43 @@
+* {
+  color: black;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  color: white;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  margin: auto;
+
+  font-family: arial;
+  background-color: #f1f1f1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.card input,
+.card select {
+  padding: 8px 10px;
+  min-width: 500px;
+
+  border: 2px solid gray;
+  border-radius: 2px;
+  background-color: #eee;
+}
+
+.card select {
+}
+
+.card label {
+  margin-top: 20px;
+  margin-bottom: 4px;
+}
