@@ -17,6 +17,7 @@ export const getProvider = () => {
   );
 };
 
+
 export const getContract = (provider: Provider, type: "vejoe" | "jlp") => {
   switch (type) {
     case "vejoe":
