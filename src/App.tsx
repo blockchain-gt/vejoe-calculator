@@ -75,7 +75,7 @@ function App() {
               setWallet(e.target.value);
             }}
           />
-          <h3>Lorem Ipsum Calculator</h3>
+          <h3 style={{padding:"8px 0px"}}>Lorem Ipsum Calculator</h3>
           <select
             name=""
             id="select"
@@ -113,6 +113,15 @@ function App() {
             }}
           />
           {/* </div> */}
+          <label htmlFor="">Wallet Balance</label>
+          <input
+            type="number"
+            value={poolLiquidity}
+            onChange={(e) => {
+              //@ts-ignore
+              setPoolLiquidity(e.target.value);
+            }}
+          />
           <label htmlFor="">Pool Liquidity</label>
           <input
             type="number"
