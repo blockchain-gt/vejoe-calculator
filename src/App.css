@@ -3,7 +3,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #b4b8bb;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -12,18 +12,31 @@
 }
 
 .card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   max-width: 600px;
   margin: auto;
 
   font-family: arial;
-  background-color: #f1f1f1;
+  background-color: #fff;
   display: flex;
   flex-direction: column;
   border-radius: 20px;
-  padding: 20px;
+
+  overflow: hidden;
 
   transition: 0.3s;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.card h3 {
+  padding: 30px 40px 10px 40px;
+  font-size: 1.5rem;
+  font-weight: 200;
+}
+
+.card .body {
+  padding: 20px 40px;
+  background-color: #f9f9ff;
 }
 
 .card input,
@@ -42,12 +55,8 @@
 .card label {
   margin-top: 20px;
   margin-bottom: 4px;
-  font-weight: 500;
-}
-
-.card {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+  font-weight: 300;
+  color: gray;
 }
 
 .hidden {
