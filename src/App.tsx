@@ -4,6 +4,9 @@ import { BigNumber, Contract, ethers } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { getContract, getProvider } from "./lib";
 import { Listbox } from "@headlessui/react";
+import Dropdown from "./components/Dropdown";
+
+type Option = { title: string; images: string[] };
 
 function App() {
   const [lp, setLp] = useState<string>(); // dropdown, AVAX/USDC etc
@@ -61,15 +64,22 @@ function App() {
     getData();
   }, [jlpContract, veJoeContract, wallet]);
 
-  const lpOptions = [{ name: "AVAX/USDC", value: "AVAX/USDC" }];
+  const lpOptions = [
+    { title: "AVAX/USDC", images: ["/farms/avax.png", "/farms/lost.png"] },
+    { title: "AVAX/1234", images: ["/farms/avax.png", "/farms/lost.png"] },
+    { title: "AVAX/TEST", images: ["/farms/avax.png", "/farms/lost.png"] },
+  ];
+  const [selectedDropdownItem, setSelectedDropdownItem] = useState<Option>(
+    lpOptions[0]
+  );
 
   return (
     <div className="App">
       <header className="App-header">
-        <div className={`card ${cardShown ? "" : "hidden"}`}>
-          <h3>Lorem Ipsum Calculator</h3>
+        <div className={`card relative ${cardShown ? "" : "hidden"}`}>
+          <h3>Boosted Farm Calculator</h3>
           <div className="body">
-            <label htmlFor="">Wallet</label>
+            {/* <label htmlFor="">Wallet</label>
             <input
               type="text"
               value={wallet}
@@ -77,8 +87,14 @@ function App() {
                 //@ts-ignore
                 setWallet(e.target.value);
               }}
+            /> */}
+            <Dropdown
+              options={lpOptions}
+              onSelect={(item) => {
+                setSelectedDropdownItem(item);
+              }}
             />
-            <select
+            {/* <select
               name=""
               id="select"
               value={lp}
@@ -94,26 +110,40 @@ function App() {
                   </option>
                 );
               })}
-            </select>
+            </select> */}
             {/* <div className="amounts"> */}
-            <label htmlFor="">Amount 1 (this should change)</label>{" "}
-            <input
-              type="number"
-              value={amount1}
-              onChange={(e) => {
-                //@ts-ignore
-                setAmount1(e.target.value);
-              }}
-            />
-            <label htmlFor="">Amount 2 (this should change)</label>
-            <input
-              type="number"
-              value={amount2}
-              onChange={(e) => {
-                //@ts-ignore
-                setAmount2(e.target.value);
-              }}
-            />
+            <div className="farm-input">
+              <img src={selectedDropdownItem.images[0]} alt="" />
+              <div style={{ marginLeft: "10px" }}>
+                <label htmlFor="">
+                  {selectedDropdownItem.title.split("/")[0]}
+                </label>
+                <input
+                  type="number"
+                  value={amount1}
+                  onChange={(e) => {
+                    //@ts-ignore
+                    setAmount1(e.target.value);
+                  }}
+                />
+              </div>
+            </div>
+            <div className="farm-input">
+              <img src={selectedDropdownItem.images[1]} alt="" />
+              <div style={{ marginLeft: "10px" }}>
+                <label htmlFor="">
+                  {selectedDropdownItem.title.split("/")[1]}
+                </label>
+                <input
+                  type="number"
+                  value={amount2}
+                  onChange={(e) => {
+                    //@ts-ignore
+                    setAmount2(e.target.value);
+                  }}
+                />
+              </div>
+            </div>
             {/* </div> */}
             <label htmlFor="">Wallet Balance</label>
             <input
@@ -133,38 +163,23 @@ function App() {
                 setPoolLiquidity(e.target.value);
               }}
             />
+          </div>
+          <footer>
             <p>
               Pool share:{" "}
-              {/* {(JlpBalance?.toNumber() / parseInt(totalJlpSupply)).toString()}% */}
-              {(JlpBalance?.toNumber() || 0) /
+              {(JlpBalance?.toNumber() || 1) /
                 (totalJlpSupply?.toNumber() || 1)}
               %
             </p>
             <label htmlFor="">veJoe share (this should change)</label>
-            {/* <input
-            type="number"
-            value={veJoeBalance}
-            onChange={(e) => {
-              //@ts-ignore
-              setVeJoeBalance(e.target.value);
-            }}
-          /> */}
             <label htmlFor="">Total veJOE supply</label>
-            {/* <input
-            type="number"
-            value={totalVeJoeSupply}
-            onChange={(e) => {
-              //@ts-ignore
-              setTotalVeJoeSupply(e.target.value);
-            }}
-          /> */}
             <div id="">
               <p>veJOE share: 123</p>
               <p>base APR: 123</p>
               <p>current boosted APR: 123</p>
               <p>estimated boosted APR: 123</p>
             </div>
-          </div>
+          </footer>
         </div>
       </header>
     </div>

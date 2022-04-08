@@ -15,7 +15,6 @@
   max-width: 600px;
   margin: auto;
 
-  font-family: arial;
   background-color: #fff;
   display: flex;
   flex-direction: column;
@@ -42,14 +41,16 @@
 .card input,
 .card select {
   padding: 8px 10px;
-  min-width: 500px;
+  min-width: 450px;
 
-  border: 2px solid gray;
-  border-radius: 2px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
   background-color: #eee;
 }
 
-.card select {
+body {
+  font-size: 18px;
+  font-family: Avenir;
 }
 
 .card label {
@@ -61,10 +62,91 @@
 
 .hidden {
   opacity: 0;
-  transform: translateY(10px) scale(0.98);
+  transform: translateY(-4px) scale(0.99);
+  /* // no pointer events */
+  pointer-events: none;
 }
 
 .card h3 {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.card input {
+  background-color: white;
+}
+
+.dropdown-body {
+  position: absolute;
+  background-color: white;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  width: 400px;
+  transform: translateY(2px);
+
+  transition: 0.1s;
+  transform-origin: 0px;
+
+  z-index: 100;
+
+  /* Shadow */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.row {
+  padding: 4px 20px;
+  display: flex;
+  cursor: pointer;
+
+  font-size: 16px;
+
+  transition: 0.1s;
+}
+
+.dropdown-body .row:hover {
+  background-color: #f9f9ff;
+}
+
+.dropdown-button {
+  text-align: left;
+  border: 1px solid lightgray;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.relative {
+  position: relative;
+}
+
+.row .images img {
+  height: 30px;
+  border-radius: 99999px;
+  border: 3px solid white;
+}
+
+.row .images {
+  transform: translateY(2px);
+}
+
+.row .images img:not(:first-child) {
+  transform: translateX(-14px);
+}
+
+.farm-input {
+  z-index: 0;
+  display: flex;
+  position: relative;
+  margin-top: 10px;
+}
+
+.farm-input img {
+  height: 30px;
+  border-radius: 99999px;
+  transform: translateY(26px);
+}
+
+.card footer {
+  padding: 10px;
 }
