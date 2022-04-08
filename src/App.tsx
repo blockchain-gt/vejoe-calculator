@@ -67,78 +67,81 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div className={`card ${cardShown ? "" : "hidden"}`}>
-          <label htmlFor="">Wallet</label>
-          <input
-            type="text"
-            value={wallet}
-            onChange={(e) => {
-              //@ts-ignore
-              setWallet(e.target.value);
-            }}
-          />
-          <h3 style={{ padding: "8px 0px" }}>Lorem Ipsum Calculator</h3>
-          <select
-            name=""
-            id="select"
-            value={lp}
-            onChange={(e) => {
-              setLp(e.target.value);
-            }}
-          >
-            <option value="">Select...</option>
-            {[{ name: "AVAX/USDC", value: "AVAX/USDC" }].map((lp) => {
-              return (
-                <option key={lp.value} value={lp.value}>
-                  {lp.name}
-                </option>
-              );
-            })}
-          </select>
-          {/* <div className="amounts"> */}
-          <label htmlFor="">Amount 1 (this should change)</label>{" "}
-          <input
-            type="number"
-            value={amount1}
-            onChange={(e) => {
-              //@ts-ignore
-              setAmount1(e.target.value);
-            }}
-          />
-          <label htmlFor="">Amount 2 (this should change)</label>
-          <input
-            type="number"
-            value={amount2}
-            onChange={(e) => {
-              //@ts-ignore
-              setAmount2(e.target.value);
-            }}
-          />
-          {/* </div> */}
-          <label htmlFor="">Wallet Balance</label>
-          <input
-            type="number"
-            value={poolLiquidity}
-            onChange={(e) => {
-              //@ts-ignore
-              setPoolLiquidity(e.target.value);
-            }}
-          />
-          <label htmlFor="">Pool Liquidity</label>
-          <input
-            type="number"
-            value={poolLiquidity}
-            onChange={(e) => {
-              //@ts-ignore
-              setPoolLiquidity(e.target.value);
-            }}
-          />
-          <p>
-            Pool share:{" "}
-            {/* {(JlpBalance?.toNumber() / parseInt(totalJlpSupply)).toString()}% */}
-            {(JlpBalance?.toNumber() || 0) / (totalJlpSupply?.toNumber() || 1)}%
-          </p>
-          <label htmlFor="">veJoe share (this should change)</label>
-          {/* <input
+          <h3>Lorem Ipsum Calculator</h3>
+          <div className="body">
+            <label htmlFor="">Wallet</label>
+            <input
+              type="text"
+              value={wallet}
+              onChange={(e) => {
+                //@ts-ignore
+                setWallet(e.target.value);
+              }}
+            />
+            <select
+              name=""
+              id="select"
+              value={lp}
+              onChange={(e) => {
+                setLp(e.target.value);
+              }}
+            >
+              <option value="">Select...</option>
+              {[{ name: "AVAX/USDC", value: "AVAX/USDC" }].map((lp) => {
+                return (
+                  <option key={lp.value} value={lp.value}>
+                    {lp.name}
+                  </option>
+                );
+              })}
+            </select>
+            {/* <div className="amounts"> */}
+            <label htmlFor="">Amount 1 (this should change)</label>{" "}
+            <input
+              type="number"
+              value={amount1}
+              onChange={(e) => {
+                //@ts-ignore
+                setAmount1(e.target.value);
+              }}
+            />
+            <label htmlFor="">Amount 2 (this should change)</label>
+            <input
+              type="number"
+              value={amount2}
+              onChange={(e) => {
+                //@ts-ignore
+                setAmount2(e.target.value);
+              }}
+            />
+            {/* </div> */}
+            <label htmlFor="">Wallet Balance</label>
+            <input
+              type="number"
+              value={poolLiquidity}
+              onChange={(e) => {
+                //@ts-ignore
+                setPoolLiquidity(e.target.value);
+              }}
+            />
+            <label htmlFor="">Pool Liquidity</label>
+            <input
+              type="number"
+              value={poolLiquidity}
+              onChange={(e) => {
+                //@ts-ignore
+                setPoolLiquidity(e.target.value);
+              }}
+            />
+            <p>
+              Pool share:{" "}
+              {/* {(JlpBalance?.toNumber() / parseInt(totalJlpSupply)).toString()}% */}
+              {(JlpBalance?.toNumber() || 0) /
+                (totalJlpSupply?.toNumber() || 1)}
+              %
+            </p>
+            <label htmlFor="">veJoe share (this should change)</label>
+            {/* <input
             type="number"
             value={veJoeBalance}
             onChange={(e) => {
@@ -146,8 +149,8 @@ function App() {
               setVeJoeBalance(e.target.value);
             }}
           /> */}
-          <label htmlFor="">Total veJOE supply</label>
-          {/* <input
+            <label htmlFor="">Total veJOE supply</label>
+            {/* <input
             type="number"
             value={totalVeJoeSupply}
             onChange={(e) => {
@@ -155,11 +158,12 @@ function App() {
               setTotalVeJoeSupply(e.target.value);
             }}
           /> */}
-          <div id="">
-            <p>veJOE share: 123</p>
-            <p>base APR: 123</p>
-            <p>current boosted APR: 123</p>
-            <p>estimated boosted APR: 123</p>
+            <div id="">
+              <p>veJOE share: 123</p>
+              <p>base APR: 123</p>
+              <p>current boosted APR: 123</p>
+              <p>estimated boosted APR: 123</p>
+            </div>
           </div>
         </div>
       </header>
