@@ -5,6 +5,7 @@ import { BigNumber, Contract } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { getContract, getProvider } from "./lib";
 import Dropdown from "./components/Dropdown";
+import LineDisplay from "./components/LineDisplay";
 
 type Option = { title: string; images: string[] };
 
@@ -54,13 +55,15 @@ function App() {
   }, [jlpContract, veJoeContract]);
 
   const lpOptions = [
-    { title: "AVAX/USDC", images: ["/symbols/avax.png", "/symbols/lost.png"] },
-    { title: "AVAX/1234", images: ["/symbols/avax.png", "/symbols/lost.png"] },
-    { title: "AVAX/TEST", images: ["/symbols/avax.png", "/symbols/lost.png"] },
+    { title: "AVAX/USDC", images: ["/symbols/avax.png", "/symbols/USDC.png"] },
+    { title: "AVAX/1234", images: ["/symbols/avax.png", "/symbols/USDC.png"] },
+    { title: "AVAX/TEST", images: ["/symbols/avax.png", "/symbols/USDC.png"] },
   ];
   const [selectedDropdownItem, setSelectedDropdownItem] = useState<Option>(
     lpOptions[0]
   );
+
+  var poolShare = (JlpBalance?.toNumber() || 1) / (totalJlpSupply?.toNumber() || 1);
 
   return (
     <div className="App">
@@ -142,6 +145,9 @@ function App() {
                 //@ts-ignore
                 setPoolLiquidity(e.target.value);
               }}
+              style={{
+                width: "90%"
+              }}
             />
             <label htmlFor="">Pool Liquidity</label>
             <input
@@ -151,18 +157,21 @@ function App() {
                 //@ts-ignore
                 setPoolLiquidity(e.target.value);
               }}
+              style={{
+                width: "90%"
+              }}
             />
           </div>
           <footer>
-            <p>
-              Pool share:{" "}
-              {(JlpBalance?.toNumber() || 1) /
-                (totalJlpSupply?.toNumber() || 1)}
-              %
-            </p>
+            <LineDisplay title="Pool Share" value={poolShare.toFixed(20) + "%"}/>
+            <LineDisplay title="veJOE Share" value={"123"}/>
+            <LineDisplay title="Total veJOE Supply" value={"123"}/>
+            <LineDisplay title="Base APR" value={"123"}/>
+            <LineDisplay title="Current Boosted APR" value={"123"}/>
+            <LineDisplay title="Estimated Boosted APR" value={"123"}/>
             <label htmlFor="">veJoe share (this should change)</label>
             <label htmlFor="">Total veJOE supply</label>
-            <div id="">
+            <div id="Results">
               <p>veJOE share: 123</p>
               <p>base APR: 123</p>
               <p>current boosted APR: 123</p>
