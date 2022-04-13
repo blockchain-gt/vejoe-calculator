@@ -5,15 +5,49 @@
  */
 
 
-
+import { LpOption } from "./three/types";
 import { GraphQLClient, gql } from "graphql-request";
+import { Contract } from "ethers";
+import { LP_abi } from "./three";
+import { provider } from "./three";
 const client = new GraphQLClient(
   "https://api.thegraph.com/subgraphs/name/traderjoe-xyz/exchange",
   {
     headers: {},
   }
 );
+export async function getIssuance(pool_data: LpOption["poolData"], amount0: number, amount1: number) {
+  const token0_name = pool_data.token0Symbol;
+  if (token0_name === "WTBC.e") {
+    amount0 *= 10e8; //WTBC.e is the only token that uses 8 decimals
+  } else if (token0_name === "USDT.e" || token0_name === "USDC" || token0_name === "USDC.e") {
+    amount0 *= 10e6; //Stablecoins use 6 decimals
+    amount0 = Math.round(amount0);
+  } else {
+    amount0 *= 10e18; //Normal coins use 18 decimals
+  }
+  const token1_name = pool_data.token1Symbol;
+  if (token1_name === "WTBC.e") {
+    amount1 *= 10e8; //WTBC.e is the only token that uses 8 decimals
+  } else if (token1_name === "USDT.e" || token1_name === "USDC" || token1_name === "USDC.e") {
+    amount1 *= 10e6; //Stablecoins use 6 decimals
+    amount1 = Math.round(amount1);
+  } else {
+    amount1 *= 10e18; //Normal coins use 18 decimals
+  }
 
+
+  const contract = new Contract(pool_data.lpContract, LP_abi, provider);
+  const reserves = await contract.getReserves();
+  const liquidity = Math.min(
+    amount0 / reserves[0],
+    amount1 / reserves[1]
+  )
+  // console.log(amount0 / reserves[0]);
+  // console.log(amount1 / reserves[1]);
+  // console.log(amount0 / reserves[0] * pool_data.totalSupply);
+  return liquidity * pool_data.totalSupply / 10e18;
+}
 export async function getPairPrice(address: string) {
   const query = gql`
     query {

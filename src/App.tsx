@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 
 import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/three/types";
+import { getIssuance } from "./lib/pairs";
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0); // editable, num
@@ -28,13 +29,15 @@ function App() {
   // JLP
   const [jlpBalance, setJlpBalance] = useState<number>(0); // editable number
   const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0); // editable number
-
+  const [jlpIssuance, setJlpIssuance] = useState<number>(0);
   const [cardShown, setCardShown] = useState<boolean>(true);
 
   const [lpOptions, setLpOptions] = useState<LpOption[]>([]);
 
   const [selectedPool, setSelectedPool] = useState<LpOption | null>(null);
-
+  const getTotalJlpBalance = () => {
+    return +jlpBalance + +jlpIssuance;
+  }
   useEffect(() => {
     async function getData() {
       const balancePromise = veJoeContract.balanceOf(wallet);
@@ -44,9 +47,9 @@ function App() {
         await totalSupplyPromise,
       ]);
 
-      setOriginalVeJoeBalance(balance / 1e18);
-      setVeJoeBalance(balance / 1e18);
-      setTotalVeJoeSupply(totalSupply / 1e18);
+      setOriginalVeJoeBalance(balance / 10e18);
+      setVeJoeBalance(balance / 10e18);
+      setTotalVeJoeSupply(totalSupply / 10e18);
     }
     getData();
   }, []);
@@ -54,9 +57,9 @@ function App() {
   const refreshVeJoeBalance = async () => {
     const balance = await veJoeContract.balanceOf(wallet);
 
-    setOriginalVeJoeBalance(balance / 1e18);
+    setOriginalVeJoeBalance(balance / 10e18);
 
-    setVeJoeBalance(balance / 1e18);
+    setVeJoeBalance(balance / 10e18);
   };
 
   useEffect(() => {
@@ -90,6 +93,7 @@ function App() {
     }
   }, [selectedPool]);
 
+
   return (
     <div className="App">
       <header className="App-header">
@@ -111,7 +115,6 @@ function App() {
                 value={jlpBalance}
               />
             </div>
-
             <div className="farm-input">
               <img src={selectedPool?.images[0]} alt="" />
               <div style={{ marginLeft: "10px" }}>
@@ -122,7 +125,10 @@ function App() {
                   onChange={async (e) => {
                     //@ts-ignore
                     setAmount1(e.target.value);
-                    setAmount2(await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, true))
+                    const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, true);
+                    setAmount2(pair);
+                    if (selectedPool === undefined) return;
+                    setJlpIssuance(await getIssuance(selectedPool!.poolData, Number.parseFloat(e.target.value), pair));
                   }}
                 />
               </div>
@@ -137,12 +143,30 @@ function App() {
                   onChange={async (e) => {
                     //@ts-ignore
                     setAmount2(e.target.value);
-                    setAmount1(await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, false))
+                    const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, false);
+                    setAmount1(pair);
+                    if (selectedPool === undefined) return;
+                    setJlpIssuance(await getIssuance(selectedPool!.poolData, pair, Number.parseFloat(e.target.value)));
                   }}
                 />
               </div>
             </div>
-
+            <div className="input">
+              <label htmlFor="">Prospective JLP Issuance</label>
+              <input
+                disabled
+                type="number"
+                value={jlpIssuance}
+              />
+            </div>
+            <div className="input">
+              <label htmlFor="">Prospective JLP Balance</label>
+              <input
+                disabled
+                type="number"
+                value={getTotalJlpBalance()}
+              />
+            </div>
             <div className="input">
               <label htmlFor="">
                 veJOE Balance{" "}
