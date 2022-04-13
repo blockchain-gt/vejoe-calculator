@@ -92,6 +92,9 @@ body {
   /* Shadow */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  overflow-y: scroll;
+
+  max-height: 300px;
 }
 
 .row {
@@ -149,4 +152,20 @@ body {
 
 .card footer {
   padding: 10px;
+}
+
+.statbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0px 20px;
+}
+
+.input {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.input input {
+  width: 490px;
 }

@@ -1,17 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { useClickAway } from "react-use";
-
-type Option = { title: string; images: string[] };
+import { LpOption } from "../lib/three/types";
 
 export default function Dropdown({
   options,
   onSelect,
 }: {
-  options: Option[];
-  onSelect: (option: Option) => void;
+  options: LpOption[];
+  onSelect: (option: LpOption) => void;
 }) {
   const [selected, setSelected] = useState(options[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    setSelected(options[0]);
+  }, [options]);
 
   const bodyRef = useRef<HTMLDivElement>(null);
 
@@ -34,8 +37,8 @@ export default function Dropdown({
     <div>
       <div className="dropdown-button">
         <Row
-          title={selected.title}
-          images={selected.images}
+          title={selected?.title}
+          images={selected?.images}
           onClick={() => {
             setDropdownOpen(!dropdownOpen);
           }}
@@ -49,6 +52,7 @@ export default function Dropdown({
         {options.map((option) => {
           return (
             <Row
+              key={option.title}
               title={option.title}
               images={option.images}
               onClick={() => {
@@ -75,8 +79,8 @@ function Row({
   return (
     <div className="row" onClick={onClick}>
       <div className="images">
-        {images.map((img) => {
-          return <img src={img} alt={img} />;
+        {images?.map((img) => {
+          return <img key={img} src={img} alt={img} />;
         })}
       </div>
       <div
