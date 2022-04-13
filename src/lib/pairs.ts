@@ -23,7 +23,7 @@ async function getPairPrice(address: string) {
   return response;
 }
 
-async function main() {
+async function getPrices() {
   const WAVAXPromise = getPairPrice(
     "0xf4003f4efbe8691b60249e6afbd307abe7758adb"
   );
@@ -42,8 +42,10 @@ async function main() {
     WBTCPromise,
   ]);
 
-  console.log(WAVAX);
-  console.log(JOE);
-  console.log(WETH);
-  console.log(WBTC);
+  return {
+    WAVAX,
+    JOE,
+    WETH,
+    WBTC,
+  };
 }
