@@ -1,79 +1,105 @@
 /* eslint-disable no-unused-vars */
 const Web3 = require('web3')
-const Web3Eth = require('web3-eth')
-const Web3HttpProvider = require('web3-providers-http');
 
 const fs = require('fs') //file i/o
 
 //Set up, translated from the python folder
 const rpc = "https://api.avax.network/ext/bc/C/rpc"
 const web3 = new Web3(new Web3.providers.HttpProvider(rpc))
-//Load abis
-const bmc_abi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"allocPoint","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"veJoeShareBp","type":"uint256"},{"indexed":true,"internalType":"contract IERC20","name":"lpToken","type":"address"},{"indexed":true,"internalType":"contract IRewarder","name":"rewarder","type":"address"}],"name":"Add","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EmergencyWithdraw","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Harvest","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Init","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"allocPoint","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"veJoeShareBp","type":"uint256"},{"indexed":true,"internalType":"contract IRewarder","name":"rewarder","type":"address"},{"indexed":false,"internalType":"bool","name":"overwrite","type":"bool"}],"name":"Set","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"lastRewardTimestamp","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"lpSupply","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"accJoePerShare","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"accJoePerFactorPerShare","type":"uint256"}],"name":"UpdatePool","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"pid","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Withdraw","type":"event"},{"inputs":[],"name":"JOE","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MASTER_CHEF_V2","outputs":[{"internalType":"contract IMasterChefJoe","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MASTER_PID","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"VEJOE","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint96","name":"_allocPoint","type":"uint96"},{"internalType":"uint32","name":"_veJoeShareBp","type":"uint32"},{"internalType":"contract IERC20","name":"_lpToken","type":"address"},{"internalType":"contract IRewarder","name":"_rewarder","type":"address"}],"name":"add","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"address","name":"","type":"address"}],"name":"claimableJoe","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"}],"name":"emergencyWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"harvestFromMasterChef","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract IERC20","name":"_dummyToken","type":"address"}],"name":"init","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"contract IMasterChefJoe","name":"_MASTER_CHEF_V2","type":"address"},{"internalType":"contract IERC20","name":"_joe","type":"address"},{"internalType":"contract IERC20","name":"_veJoe","type":"address"},{"internalType":"uint256","name":"_MASTER_PID","type":"uint256"}],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"joePerSec","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"massUpdatePools","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"address","name":"_user","type":"address"}],"name":"pendingTokens","outputs":[{"internalType":"uint256","name":"pendingJoe","type":"uint256"},{"internalType":"address","name":"bonusTokenAddress","type":"address"},{"internalType":"string","name":"bonusTokenSymbol","type":"string"},{"internalType":"uint256","name":"pendingBonusToken","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"poolInfo","outputs":[{"internalType":"contract IERC20","name":"lpToken","type":"address"},{"internalType":"uint96","name":"allocPoint","type":"uint96"},{"internalType":"uint256","name":"accJoePerShare","type":"uint256"},{"internalType":"uint256","name":"accJoePerFactorPerShare","type":"uint256"},{"internalType":"uint64","name":"lastRewardTimestamp","type":"uint64"},{"internalType":"contract IRewarder","name":"rewarder","type":"address"},{"internalType":"uint32","name":"veJoeShareBp","type":"uint32"},{"internalType":"uint256","name":"totalFactor","type":"uint256"},{"internalType":"uint256","name":"totalLpSupply","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"poolLength","outputs":[{"internalType":"uint256","name":"pools","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"uint96","name":"_allocPoint","type":"uint96"},{"internalType":"uint32","name":"_veJoeShareBp","type":"uint32"},{"internalType":"contract IRewarder","name":"_rewarder","type":"address"},{"internalType":"bool","name":"_overwrite","type":"bool"}],"name":"set","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"totalAllocPoint","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_user","type":"address"},{"internalType":"uint256","name":"_newVeJoeBalance","type":"uint256"}],"name":"updateFactor","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"}],"name":"updatePool","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"address","name":"","type":"address"}],"name":"userInfo","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"rewardDebt","type":"uint256"},{"internalType":"uint256","name":"factor","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pid","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-const JLP_abi = JSON.parse(fs.readFileSync("../abi/JLP_abi.json"))
-const veJOE_abi = JSON.parse(fs.readFileSync("../abi/veJOE_abi.json"))
-//contract addresses
-const veJOE_contract_address = "0x3cabf341943Bc8466245e4d6F1ae0f8D071a1456"
-const bmc_contract_address = "0x4483f0b6e2F5486D06958C20f8C39A7aBe87bf8F"
 
-const LPS = {
-    "USDC/USDCe" : {
-        "JLP": "0x2A8A315e82F85D1f0658C5D66A452Bbdd9356783",
-        "tokenAContractAddr": "",
-        "tokenBContractAddr": "",
-        "tokenASymbolURL": "",
-        "tokenBSymbolURL": "",
+//Load abis and create contract objects
+const bmc_abi = JSON.parse(fs.readFileSync("../abi/bmc_abi.json"))
+const bmc_contract_address = "0x4483f0b6e2F5486D06958C20f8C39A7aBe87bf8F"
+const bmc = new web3.eth.Contract(bmc_abi, bmc_contract_address)
+const SECONDS_IN_YEAR = 60*60*24*365
+let totalJPS = null
+
+const veJOE_abi = JSON.parse(fs.readFileSync("../abi/veJOE_abi.json"))
+const veJOE_contract_address = "0x3cabf341943Bc8466245e4d6F1ae0f8D071a1456"
+const veJOE_contract = new web3.eth.Contract(veJOE_abi, veJOE_contract_address)
+
+const JLP_abi = JSON.parse(fs.readFileSync("../abi/JLP_abi.json"))
+const ERC20_abi = JSON.parse(fs.readFileSync("../abi/ERC20_abi.json"))
+
+async function getLP(pid) {
+    if (! totalJPS) {
+        totalJPS = await bmc.methods.joePerSec().call()
     }
+    let data = await bmc.methods.poolInfo(pid).call()
+    let JLP_contract = new web3.eth.Contract(JLP_abi, data.lpToken)
+    let token0 = await JLP_contract.methods.token0().call()
+    let token0_contract = new web3.eth.Contract(ERC20_abi, token0)
+    let token1 = await JLP_contract.methods.token1().call()
+    let token1_contract = new web3.eth.Contract(ERC20_abi, token1)
+    return  {
+            lpToken : data.lpToken,
+            lpContract : JLP_contract,
+            token0 : token0,
+            token0Contract : token0_contract,
+            token0Symbol : await token0_contract.methods.symbol().call(), 
+            token0Name : await token0_contract.methods.name().call(),
+            token0Decimals : await token0_contract.methods.decimals().call(),
+            token1 : token1,
+            token1Contract : token1_contract,
+            token1Symbol : await token1_contract.methods.symbol().call(),
+            token1Name : await token1_contract.methods.name().call(),
+            token1Decimals : await token1_contract.methods.decimals().call(),
+            totalSupply : data.totalLpSupply,
+            totalFactor : data.totalFactor,
+            reserves : await JLP_contract.methods.getReserves().call()
+        }
 }
-async function getWalletBalance(wallet, contractAddress, abi) {
-    const contract = new web3.eth.Contract(abi, contractAddress)
-    const myBalance = await contract.methods.balanceOf(wallet).call()
+
+async function getLPs() {
+    let num_pools = await bmc.methods.poolLength().call()
+    let pid = 0
+    let pool_data = []
+    while (pid < num_pools) {
+        pool_data.push(getLP(pid))
+        pid++ 
+    }
+    return Promise.all(pool_data)
+}
+
+async function getWalletBalance(wallet, contract) {
+    let myBalance = await contract.methods.balanceOf(wallet).call()
     return myBalance
 }
-/*
-    @param myBalance: user's total JOE balance
-    @const JOE_PER_SECOND: 0.000003215020576 as listed in 
-    https://docs.traderjoexyz.com/main/trader-joe/staking/vejoe-staking#accrual-speed-base-rate
-    @const SECONDS_PER_YEAR: 31536000
 
-    myBalance * JOE_PER_SECOND should return veJOE accrued per second, then multiplied out to yearly.
-*/
-function getBaseAPR(myBalance) {
-    return myBalance * 0.000003215020576 * 31536000
-}
-async function getPoolShare(wallet, contractAddress, abi) {
-    const contract = new web3.eth.Contract(abi, contractAddress)
-    const myBalance = await contract.methods.balanceOf(wallet).call()
-    const totalBalance = await contract.methods.totalSupply().call()
-    return myBalance / totalBalance
+async function test() {
+    for (let i of [0,1,2,3,4,5,6,7,8,9,10,11]) {
+        await main(i)
+    }
+    // await main(7)
 }
 
-async function getPoolInfo(pool_num, contractAddress, abi) {
-    const contract = new web3.eth.Contract(abi, contractAddress) 
-    return await contract.methods.poolInfo(pool_num).call()
+async function main(pid) {
+    let wallet = "0x1E61E337B218b103D599a6C7495E959dB0A5d287"
+
+    let pool_data = await getLP(pid)
+
+    let veJOE_balance = await getWalletBalance(wallet, veJOE_contract)
+    let veJOE_total_supply = await veJOE_contract.methods.totalSupply().call()
+    console.log(`veJOE Balance: ${veJOE_balance}`)
+    console.log(`veJOE Supply:  ${veJOE_total_supply}`)
+    console.log(`veJOE Share:   ${veJOE_balance / veJOE_total_supply * 100}`)
+
+    let price = (pool_data.reserves[0]/10**pool_data.token0Decimals)/(pool_data.reserves[1]/10**pool_data.token1Decimals)
+    console.log(`${pool_data.token0Symbol}/${pool_data.token1Symbol}:    ${1/price}`)
+
+    let user_info = await bmc.methods.userInfo(pid, wallet).call()
+    let user_liquidity = user_info.amount
+    let pool_total_liquidity = pool_data.totalSupply
+
+    console.log(`JLP balance:   ${user_liquidity}`)
+    console.log(`JLP share:     ${user_liquidity/pool_total_liquidity}`)
+
+    let veJOEShare = 0.4
+    let pool_total_factor = pool_data.totalFactor
+    let base_rewards = (user_liquidity*totalJPS*(1-veJOEShare)) / pool_total_liquidity
+    let boosted_rewards = (((user_liquidity*veJOE_balance)**0.5)*totalJPS*veJOEShare)/pool_total_factor
+    
+    console.log(`Yearly rewards: ${((base_rewards+boosted_rewards)/10**18)*(SECONDS_IN_YEAR)}`)
 }
 
-async function main() {
-    // //First kernal test, finding JLP pool share
-    // var wallet = '0x4483f0b6e2F5486D06958C20f8C39A7aBe87bf8F'
-    // const poolShare = await getPoolShare(wallet, LPS["USDC/USDCe"]["JLP"], JLP_abi)
-    // console.log(poolShare) //0.5873449796433704
-
-    // //Second kernal test, executing same function for veJOE_share
-    // wallet = "0x500fBF102936bD6D470D6aCA7E54427216bb47BA"
-    // const veJOE_share = await getPoolShare(wallet, veJOE_contract_address, veJOE_abi)
-    // console.log(veJOE_share) //0.00006759801609830352
-
-    // //Third kernal
-    // const poolInfo = await getPoolInfo(11, bmc_contract_address, bmc_abi)
-    // console.log(poolInfo)
-
-    //Base APR
-    const wallet = "0x500fBF102936bD6D470D6aCA7E54427216bb47BA" 
-    const myBalance = await getWalletBalance(wallet, veJOE_contract_address, veJOE_abi)
-    console.log(myBalance)
-    const res = getBaseAPR(myBalance)
-    console.log(res)
-
-}
-main().then()
+test().then()
