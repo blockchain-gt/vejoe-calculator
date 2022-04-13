@@ -1,6 +1,11 @@
 /* only dependency is "graphql-request"
  * run with "node pairs.js"
+ * Tokens: WAVAX, WETH.e, WBTC.e, JOE, LINK.e, BNB
+ * The rest are stablecoins.
  */
+
+
+
 import { GraphQLClient, gql } from "graphql-request";
 const client = new GraphQLClient(
   "https://api.thegraph.com/subgraphs/name/traderjoe-xyz/exchange",
@@ -42,10 +47,23 @@ async function getPrices() {
     WBTCPromise,
   ]);
 
+  const BNB_WAVAX_Pair = await getPairPrice("0xeb8eb6300c53c3addbb7382ff6c6fbc4165b0742");
+  const BNB = BNB_WAVAX_Pair * WAVAX;
+
+  const LINK_WAVAX_Pair = await getPairPrice("0x6f3a0c89f611ef5dc9d96650324ac633d02265d3");
+  const LINK = LINK_WAVAX_Pair * WAVAX;
+
+  // const MIM_WAVAX_Pair = await getPairPrice("0x781655d802670bba3c89aebaaea59d3182fd755d");
+  // const MIM = MIM_WAVAX_Pair * WAVAX;
+
+
   return {
     WAVAX,
     JOE,
     WETH,
     WBTC,
+    BNB,
+    LINK,
+    
   };
 }
