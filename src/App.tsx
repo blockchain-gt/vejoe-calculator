@@ -163,9 +163,9 @@ function App() {
             />
           </div>
           <footer>
+            <LineDisplay title="veJOE Share" value={(veJoeBalance ?? 0).toString()}/>
+            <LineDisplay title="Total veJOE Supply" value={(totalVeJoeSupply ?? 0).toString()}/>
             <LineDisplay title="Pool Share" value={poolShare.toFixed(20) + "%"}/>
-            <LineDisplay title="veJOE Share" value={"123"}/>
-            <LineDisplay title="Total veJOE Supply" value={"123"}/>
             <LineDisplay title="Base APR" value={"123"}/>
             <LineDisplay title="Current Boosted APR" value={"123"}/>
             <LineDisplay title="Estimated Boosted APR" value={"123"}/>

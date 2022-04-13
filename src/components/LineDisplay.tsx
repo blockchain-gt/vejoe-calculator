@@ -28,7 +28,7 @@ export default function Dropdown({title, value} : {title: string; value: string}
         >
             <h3
                 style={{
-                    fontSize: "1.3em",
+                    fontSize: "1em",
                     verticalAlign: "middle",
                     padding: "4px"
                 }}>
@@ -36,6 +36,7 @@ export default function Dropdown({title, value} : {title: string; value: string}
         </div>
             <h3
                 style={{
+                    fontSize: "1em",
                     padding: "4px",
                     textAlign: "right",
                     flex: "1",
