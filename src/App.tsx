@@ -12,7 +12,7 @@ import {
 } from "./lib/three";
 import "./App.css";
 import { useEffect, useState } from "react";
-
+import { BigNumber } from "ethers";
 import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/three/types";
 import { getIssuance } from "./lib/pairs";
@@ -58,7 +58,6 @@ function App() {
     const balance = await veJoeContract.balanceOf(wallet);
 
     setOriginalVeJoeBalance(balance / 10e18);
-
     setVeJoeBalance(balance / 10e18);
   };
 
@@ -156,7 +155,7 @@ function App() {
               <input
                 disabled
                 type="number"
-                value={jlpIssuance}
+                value={jlpIssuance.toFixed(20)}
               />
             </div>
             <div className="input">
@@ -164,7 +163,7 @@ function App() {
               <input
                 disabled
                 type="number"
-                value={getTotalJlpBalance()}
+                value={getTotalJlpBalance().toFixed(20)}
               />
             </div>
             <div className="input">

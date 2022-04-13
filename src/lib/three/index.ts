@@ -71,7 +71,7 @@ export async function getLPs() {
     bmc.totalAllocPoint(),
   ]);
 
-  console.log(totalJPS, totalAllocPoint);
+  // console.log(totalJPS, totalAllocPoint);
 
   let num_pools = await bmc.poolLength();
   let pid = 0;

@@ -16,6 +16,11 @@ const client = new GraphQLClient(
     headers: {},
   }
 );
+/*  See methodology in JLPcontract.sol
+*   @param pool_data: LpOption[] struct defining characteristics of token pool
+*   @param amount0: input of textfield mapped to token0
+*   @param amount1: input of textfield mapped to token1
+*/
 export async function getIssuance(pool_data: LpOption["poolData"], amount0: number, amount1: number) {
   const token0_name = pool_data.token0Symbol;
   if (token0_name === "WTBC.e") {
@@ -35,19 +40,19 @@ export async function getIssuance(pool_data: LpOption["poolData"], amount0: numb
   } else {
     amount1 *= 10e18; //Normal coins use 18 decimals
   }
-
-
   const contract = new Contract(pool_data.lpContract, LP_abi, provider);
   const reserves = await contract.getReserves();
   const liquidity = Math.min(
     amount0 / reserves[0],
     amount1 / reserves[1]
   )
-  // console.log(amount0 / reserves[0]);
-  // console.log(amount1 / reserves[1]);
-  // console.log(amount0 / reserves[0] * pool_data.totalSupply);
-  return liquidity * pool_data.totalSupply / 10e18;
+  console.log(amount0 / reserves[0]);
+  console.log(amount1 / reserves[1]);
+  console.log(pool_data.totalSupply.toString());
+  console.log((amount0 / reserves[0]) * pool_data.totalSupply);
+  return (liquidity * pool_data.totalSupply) / 10e18;
 }
+
 export async function getPairPrice(address: string) {
   const query = gql`
     query {
@@ -90,7 +95,6 @@ async function getPrices() {
 
   // const MIM_WAVAX_Pair = await getPairPrice("0x781655d802670bba3c89aebaaea59d3182fd755d");
   // const MIM = MIM_WAVAX_Pair * WAVAX;
-
 
   return {
     WAVAX,
