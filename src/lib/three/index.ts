@@ -4,6 +4,7 @@ import veJOE_abi from "../abi/veJOE_abi.json";
 import ERC20_abi from "../abi/ERC20_abi.json";
 import { BigNumber, Contract, getDefaultProvider } from "ethers";
 import { LpOption } from "./types";
+import { SECONDS_PER_YEAR } from "../constants";
 
 export const wallet = "0x1E61E337B218b103D599a6C7495E959dB0A5d287";
 const bmc_contract_address = "0x4483f0b6e2F5486D06958C20f8C39A7aBe87bf8F";
@@ -79,4 +80,39 @@ export async function getUserInfo(
   let pool_total_liquidity = pool_data.totalSupply;
 
   return 100 * (user_liquidity / pool_total_liquidity);
+}
+
+export function getBaseAPR(
+  totalJPS: BigNumber,
+  totalAllocPoint: BigNumber,
+  jlpBalance: number,
+  selectedPool: LpOption
+) {
+  const poolJPS =
+    //@ts-ignore
+    (totalJPS * selectedPool?.poolData.allocPoint) / totalAllocPoint;
+
+  return (
+    (SECONDS_PER_YEAR * (poolJPS * jlpBalance * 0.6)) /
+    selectedPool.poolData.totalSupply
+  );
+}
+
+export function getBoostedAPR(
+  totalJPS: BigNumber,
+  totalAllocPoint: BigNumber,
+  jlpBalance: number,
+  selectedPool: LpOption,
+  veJoeBalance: number
+) {
+  const poolJPS =
+    //@ts-ignore
+    (totalJPS * selectedPool?.poolData.allocPoint) / totalAllocPoint;
+
+  return (
+    SECONDS_PER_YEAR *
+    (((jlpBalance * veJoeBalance) ** 0.5 * poolJPS * 0.4) /
+      //@ts-ignore
+      selectedPool.poolData.totalFactor)
+  );
 }

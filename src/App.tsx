@@ -1,4 +1,6 @@
 import {
+  getBaseAPR,
+  getBoostedAPR,
   getLPs,
   getUserInfo,
   totalAllocPoint,
@@ -11,7 +13,6 @@ import { useEffect, useState } from "react";
 
 import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/three/types";
-import { SECONDS_PER_YEAR } from "./lib/constants";
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0); // editable, num
@@ -19,11 +20,12 @@ function App() {
 
   // Balance, total supply, share
   const [veJoeBalance, setVeJoeBalance] = useState<number>(0); // editable number
+  const [originalVeJoeBalance, setOriginalVeJoeBalance] = useState<number>(0); // editable number
   const [totalVeJoeSupply, setTotalVeJoeSupply] = useState<number>(0); // editable number
 
   // JLP
-  const [JlpBalance, setJlpBalance] = useState<number>(); // editable number
-  const [totalJlpSupply, setTotalJlpSupply] = useState<number>(); // editable number
+  const [jlpBalance, setJlpBalance] = useState<number>(0); // editable number
+  const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0); // editable number
 
   const [cardShown, setCardShown] = useState<boolean>(true);
 
@@ -40,11 +42,20 @@ function App() {
         await totalSupplyPromise,
       ]);
 
-      setVeJoeBalance(balance);
-      setTotalVeJoeSupply(totalSupply);
+      setOriginalVeJoeBalance(balance / 1e18);
+      setVeJoeBalance(balance / 1e18);
+      setTotalVeJoeSupply(totalSupply / 1e18);
     }
     getData();
   }, []);
+
+  const refreshVeJoeBalance = async () => {
+    const balance = await veJoeContract.balanceOf(wallet);
+
+    setOriginalVeJoeBalance(balance / 1e18);
+
+    setVeJoeBalance(balance / 1e18);
+  };
 
   useEffect(() => {
     async function getData() {
@@ -120,21 +131,31 @@ function App() {
             </div>
 
             <div className="input">
-              <label htmlFor="">veJOE Balance</label>
+              <label htmlFor="">
+                veJOE Balance{" "}
+                <button
+                  onClick={refreshVeJoeBalance}
+                  className="refresh-button"
+                >
+                  Refresh
+                </button>
+              </label>
               <input
                 type="number"
-                value={veJoeBalance / 1e18}
+                value={veJoeBalance}
                 onChange={(e) => {
                   //@ts-ignore
                   setVeJoeBalance(e.target.value);
+                  //@ts-ignore
                 }}
               />
             </div>
             <div className="input">
               <label htmlFor="">Total veJOE Supply</label>
               <input
+                disabled
                 type="number"
-                value={totalVeJoeSupply / 1e18}
+                value={totalVeJoeSupply}
                 onChange={(e) => {
                   //@ts-ignore
                   setTotalVeJoeSupply(e.target.value);
@@ -149,7 +170,7 @@ function App() {
               [
                 [
                   "Pool share",
-                  `${(100 * (JlpBalance || 0)) / (totalJlpSupply || 0)}%`,
+                  `${(100 * (jlpBalance || 0)) / (totalJlpSupply || 0)}%`,
                 ],
                 [
                   "veJOE share",
@@ -157,22 +178,42 @@ function App() {
                 ],
                 [
                   "Base APR (Joe Per Year)",
-                  `${
-                    (SECONDS_PER_YEAR *
-                      //@ts-ignore
-                      (((totalJPS * selectedPool?.poolData.allocPoint) /
-                        //@ts-ignore
-                        totalAllocPoint) *
-                        //@ts-ignore
-                        JlpBalance *
-                        0.6)) /
-                    selectedPool.poolData.totalSupply
-                  }`,
+
+                  getBaseAPR(
+                    totalJPS,
+                    totalAllocPoint,
+                    jlpBalance,
+                    selectedPool
+                  ),
                 ],
-                ["Currented Boosted APR"],
-              ].map(([label, value]) => (
+                [
+                  "Currented Boosted APR (Joe Per Year)",
+                  getBoostedAPR(
+                    totalJPS,
+                    totalAllocPoint,
+                    jlpBalance,
+                    selectedPool,
+                    originalVeJoeBalance
+                  ),
+                ],
+                [
+                  "Estimated Boosted APR (Joe Per Year)",
+                  getBoostedAPR(
+                    totalJPS,
+                    totalAllocPoint,
+                    jlpBalance,
+                    selectedPool,
+                    veJoeBalance
+                  ),
+                  "Test",
+                ],
+              ].map(([label, value, tooltip]) => (
                 <div className="statbox">
-                  <p>{label}</p>
+                  <p>
+                    {label}
+                    {/* {tooltip && <Tooltip text="test" />} */}
+                  </p>
+
                   <p>{value}</p>
                 </div>
               ))}
