@@ -14,12 +14,13 @@ const client = new GraphQLClient(
   }
 );
 
-async function getPairPrice(address: string) {
+export async function getPairPrice(address: string) {
   const query = gql`
     query {
-        pairs(where: {id: "${address}" }) {
+        pairs(where: {id: "${address.toLowerCase()}" }) {
         id
         name
+        token0Price
         token1Price
         }
     }

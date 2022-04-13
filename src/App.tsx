@@ -3,6 +3,8 @@ import {
   getBoostedAPR,
   getLPs,
   getUserInfo,
+  getUserJLPBalance,
+  returnPairPrice,
   totalAllocPoint,
   totalJPS,
   veJoeContract,
@@ -80,7 +82,7 @@ function App() {
   useEffect(() => {
     if (selectedPool) {
       setTotalJlpSupply(selectedPool.poolData.totalSupply);
-      getUserInfo(selectedPool?.index, wallet, selectedPool?.poolData).then(
+      getUserJLPBalance(selectedPool?.index, wallet, selectedPool?.poolData).then(
         (bal) => {
           setJlpBalance(bal);
         }
@@ -94,12 +96,21 @@ function App() {
         <div className={`card relative ${cardShown ? "" : "hidden"}`}>
           <h3>Boosted Farm Calculator</h3>
           <div className="body">
+          <h6>{(selectedPool?.poolData.lpContract ?? "").toString()}</h6>
             <Dropdown
               options={lpOptions}
               onSelect={(item) => {
                 setSelectedPool(item);
               }}
             />
+            <div className="input">
+              <label htmlFor="">Wallet JLP Balance</label>
+              <input
+                disabled
+                type="number"
+                value={jlpBalance}
+              />
+            </div>
 
             <div className="farm-input">
               <img src={selectedPool?.images[0]} alt="" />
@@ -108,9 +119,10 @@ function App() {
                 <input
                   type="number"
                   value={amount1}
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     //@ts-ignore
                     setAmount1(e.target.value);
+                    setAmount2(await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, true))
                   }}
                 />
               </div>
@@ -122,9 +134,10 @@ function App() {
                 <input
                   type="number"
                   value={amount2}
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     //@ts-ignore
                     setAmount2(e.target.value);
+                    setAmount1(await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, false))
                   }}
                 />
               </div>
