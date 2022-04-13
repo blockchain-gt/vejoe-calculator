@@ -1,9 +1,9 @@
+import { wallet } from "./lib/three/contracts";
 import "./App.css";
 import { useEffect, useState } from "react";
-import { BigNumber, Contract, ethers } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { getContract, getProvider } from "./lib";
-import { Listbox } from "@headlessui/react";
 import Dropdown from "./components/Dropdown";
 
 type Option = { title: string; images: string[] };
@@ -17,17 +17,10 @@ function App() {
   // Balance, total supply, share
   const [veJoeBalance, setVeJoeBalance] = useState<BigNumber>(); // editable number
   const [totalVeJoeSupply, setTotalVeJoeSupply] = useState<BigNumber>(); // editable number
-  const [veJoeShare, setVeJoeShare] = useState<BigNumber>(); // editable number
 
   // JLP
   const [JlpBalance, setJlpBalance] = useState<BigNumber>(); // editable number
   const [totalJlpSupply, setTotalJlpSupply] = useState<BigNumber>(); // editable number
-  const [JlpShare, setJlpShare] = useState<BigNumber>(); // editable number
-
-  const [joePerSecond, setJoePerSecond] = useState<number>(); // noneditable number, not shown
-  const [poolTotalFactor, setPoolTotalFactor] = useState<number>(); // noneditable number, not shown
-
-  const [baseAPR, setBaseAPR] = useState<number>();
 
   const [cardShown, setCardShown] = useState<boolean>(true);
 
@@ -35,10 +28,6 @@ function App() {
 
   const [jlpContract, setJlpContract] = useState<Contract>();
   const [veJoeContract, setVeJoeContract] = useState<Contract>();
-
-  const [wallet, setWallet] = useState(
-    "0xca2229d1ad243d398cc59c8efde6c6c4fc32c57f"
-  );
 
   useEffect(() => {
     const p = getProvider();
@@ -62,12 +51,12 @@ function App() {
     }
 
     getData();
-  }, [jlpContract, veJoeContract, wallet]);
+  }, [jlpContract, veJoeContract]);
 
   const lpOptions = [
-    { title: "AVAX/USDC", images: ["/farms/avax.png", "/farms/lost.png"] },
-    { title: "AVAX/1234", images: ["/farms/avax.png", "/farms/lost.png"] },
-    { title: "AVAX/TEST", images: ["/farms/avax.png", "/farms/lost.png"] },
+    { title: "AVAX/USDC", images: ["/symbols/avax.png", "/symbols/lost.png"] },
+    { title: "AVAX/1234", images: ["/symbols/avax.png", "/symbols/lost.png"] },
+    { title: "AVAX/TEST", images: ["/symbols/avax.png", "/symbols/lost.png"] },
   ];
   const [selectedDropdownItem, setSelectedDropdownItem] = useState<Option>(
     lpOptions[0]
