@@ -6,6 +6,22 @@ body {
   background-color: #b4b8bb;
   font-family: "Helvectica";
 }
+
+.titleRow {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  vertical-align: bottom;
+}
+
+#wallet {
+  margin-bottom: 10px;
+  flex-grow: 1;
+  justify-content: right;
+  margin-right: auto;
+}
+
 .App-header {
   min-height: 100vh;
   display: flex;

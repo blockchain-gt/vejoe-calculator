@@ -17,6 +17,7 @@ import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/three/types";
 import { getIssuance, getJoePrice, getPairPrice, revertToJLP } from "./lib/pairs";
 import { ThirdwebProvider } from '@thirdweb-dev/react';
+import { ConnectWallet } from "./components/ConnectWallet";
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0); // editable, num
@@ -41,6 +42,7 @@ function App() {
   const getTotalJlpBalance = () => {
     return +jlpBalance + +jlpIssuance;
   };
+  const [myWallet, setWallet] = useState<string>(wallet);
   useEffect(() => {
     async function getData() {
       const balancePromise = veJoeContract.balanceOf(wallet);
@@ -112,13 +114,31 @@ function App() {
   }, [selectedPool]);
 
   return (
-    <ThirdwebProvider desiredchainid={43114}>
+    <ThirdwebProvider desiredChainId={43114}>
     <div className="App">
       <header className="App-header">
         <div className={`card relative ${cardShown ? "" : "hidden"}`}>
           <div className="cb">
-            <h3>Boosted Farm Calculator</h3>
+            <div className="titleRow">
+              <h3>Boosted Farm Calculator</h3>
+              <div id="wallet">
+                <ConnectWallet/>
+              </div>
+            </div>
             <div className="body">
+              <div className="farm-input">
+                  <div style={{ marginBottom: "15px", width: "100%"}}>
+                    <label htmlFor="">Address:</label>
+                    <input
+                      style={{width:"80%"}}
+                      value={myWallet}
+                      onChange={async (e) => {
+                        //@ts-ignore
+                        setWallet(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
               <Dropdown
                 options={lpOptions}
                 onSelect={async (item) => {
@@ -133,6 +153,7 @@ function App() {
                   >
                     Refresh
                   </button>
+              
               <div className="farm-input">
                 <img src={selectedPool?.images[0]} alt="" />
                 <div style={{ marginLeft: "10px" }}>
