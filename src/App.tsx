@@ -15,7 +15,12 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/three/types";
-import { getIssuance, getJoePrice, getPairPrice, revertToJLP } from "./lib/three/index";
+import {
+  getIssuance,
+  getJoePrice,
+  getPairPrice,
+  revertToJLP,
+} from "./lib/three/index";
 import { userInfo } from "os";
 
 function App() {
@@ -44,13 +49,9 @@ function App() {
 
   const [count, setCount] = useState(0);
 
-  // Similar to componentDidMount and componentDidUpdate:
-  useEffect(() => {
-    // Update the document title using the browser API
-    alert("refreshe")
-  }, []);
   const [myWallet, setWallet] = useState<string>(wallet);
-  useEffect(() => { //on page load
+  useEffect(() => {
+    //on page load
     async function getData() {
       const balancePromise = veJoeContract.balanceOf(wallet);
       const totalSupplyPromise = veJoeContract.totalSupply();
@@ -61,7 +62,7 @@ function App() {
         await balancePromise,
         await totalSupplyPromise,
         await lpsPromise,
-        await joePricePromise
+        await joePricePromise,
       ]);
 
       const options = lps.map((lp, i) => ({
@@ -94,25 +95,33 @@ function App() {
 
   const refreshTokens = async () => {
     if (selectedPool === undefined) return;
-    const issuance = await getIssuance(selectedPool!.poolData, unmodifiedJLPBalance, poolReserves);
+    const issuance = await getIssuance(
+      selectedPool!.poolData,
+      unmodifiedJLPBalance,
+      poolReserves
+    );
     setAmount1(issuance["token0"]);
     setAmount2(issuance["token1"]);
-  }
+  };
 
-
-  useEffect(() => { //triggers when new pool selected
+  useEffect(() => {
+    //triggers when new pool selected
     async function getData() {
       setTotalJlpSupply(selectedPool!.poolData.totalSupply);
       const reservesPromise = getReserves(selectedPool!.poolData);
       const poolInfoPromise = getPoolInfo(selectedPool!.index, wallet);
       const [reserves, poolInfo] = await Promise.all([
         await reservesPromise,
-        await poolInfoPromise
-      ])
+        await poolInfoPromise,
+      ]);
       setPoolReserves(reserves);
       setUnmodified(poolInfo.amount);
       setJlpBalance(poolInfo.amount);
-      const issuance = (getIssuance(selectedPool!.poolData, poolInfo.amount, reserves));
+      const issuance = getIssuance(
+        selectedPool!.poolData,
+        poolInfo.amount,
+        reserves
+      );
       setAmount1(issuance["token0"]);
       setAmount2(issuance["token1"]);
     }
@@ -126,38 +135,37 @@ function App() {
           <div className="cb">
             <div className="titleRow">
               <h3>Boosted Farm Calculator</h3>
-              <div id="wallet">
-              </div>
+              <div id="wallet"></div>
             </div>
             <div className="body">
               <div className="farm-input">
-                  <div style={{ marginBottom: "15px", width: "100%"}}>
-                    <label htmlFor="">Address:</label>
-                    <input
-                      style={{width:"80%"}}
-                      value={myWallet}
-                      onChange={async (e) => {
-                        //@ts-ignore
-                        setWallet(e.target.value);
-                      }}
-                    />
-                  </div>
+                <div style={{ marginBottom: "15px", width: "100%" }}>
+                  <label htmlFor="">Address:</label>
+                  <input
+                    style={{ width: "80%" }}
+                    value={myWallet}
+                    onChange={async (e) => {
+                      //@ts-ignore
+                      setWallet(e.target.value);
+                    }}
+                  />
                 </div>
+              </div>
               <Dropdown
                 options={lpOptions}
                 onSelect={async (item) => {
                   if (selectedPool === item) return;
                   setSelectedPool(item);
-                  setPoolTVL((await getPairPrice(item.poolData.lpToken)).pairs[0].reserveUSD);
+                  setPoolTVL(
+                    (await getPairPrice(item.poolData.lpToken)).pairs[0]
+                      .reserveUSD
+                  );
                 }}
               />
-              <button
-                    onClick={refreshTokens}
-                    className="refresh-button"
-                  >
-                    Refresh
-                  </button>
-              
+              <button onClick={refreshTokens} className="refresh-button">
+                Refresh
+              </button>
+
               <div className="farm-input">
                 <img src={selectedPool?.images[0]} alt="" />
                 <div style={{ marginLeft: "10px" }}>
@@ -167,7 +175,7 @@ function App() {
                     value={amount1}
                     onChange={async (e) => {
                       //@ts-ignore
-                      console.log("Here")
+                      console.log("Here");
                       setAmount1(Number.parseFloat(e.target.value));
                       const pair = await returnPairPrice(
                         Number.parseFloat(e.target.value),
@@ -175,7 +183,14 @@ function App() {
                         true
                       );
                       setAmount2(pair);
-                      setJlpBalance(await revertToJLP(selectedPool!.poolData, Number.parseFloat(e.target.value), pair, poolReserves));
+                      setJlpBalance(
+                        await revertToJLP(
+                          selectedPool!.poolData,
+                          Number.parseFloat(e.target.value),
+                          pair,
+                          poolReserves
+                        )
+                      );
                     }}
                   />
                 </div>
@@ -196,7 +211,14 @@ function App() {
                         false
                       );
                       setAmount1(pair);
-                      setJlpBalance(await revertToJLP(selectedPool!.poolData, pair, Number.parseFloat(e.target.value), poolReserves))
+                      setJlpBalance(
+                        await revertToJLP(
+                          selectedPool!.poolData,
+                          pair,
+                          Number.parseFloat(e.target.value),
+                          poolReserves
+                        )
+                      );
                     }}
                   />
                 </div>
@@ -230,9 +252,20 @@ function App() {
                   onChange={async (e) => {
                     //@ts-ignore
                     setAmount2(e.target.value);
-                    const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, false);
+                    const pair = await returnPairPrice(
+                      Number.parseFloat(e.target.value),
+                      selectedPool?.poolData.lpContract,
+                      false
+                    );
                     setAmount1(pair);
-                    setJlpBalance(await revertToJLP(selectedPool!.poolData, pair, Number.parseFloat(e.target.value), poolReserves));
+                    setJlpBalance(
+                      await revertToJLP(
+                        selectedPool!.poolData,
+                        pair,
+                        Number.parseFloat(e.target.value),
+                        poolReserves
+                      )
+                    );
                   }}
                 />
               </div>
@@ -244,11 +277,17 @@ function App() {
                 [
                   [
                     "Pool share",
-                    `${((100 * (jlpBalance || 0)) / (totalJlpSupply || 0)).toFixed(5)}%`,
+                    `${(
+                      (100 * (jlpBalance || 0)) /
+                      (totalJlpSupply || 0)
+                    ).toFixed(5)}%`,
                   ],
                   [
                     "veJOE share",
-                    `${((100 * (veJoeBalance || 0)) / (totalVeJoeSupply || 0)).toFixed(5)}%`,
+                    `${(
+                      (100 * (veJoeBalance || 0)) /
+                      (totalVeJoeSupply || 0)
+                    ).toFixed(5)}%`,
                   ],
                   [
                     "Base APR (Joe Per Year)",
@@ -259,7 +298,7 @@ function App() {
                       selectedPool,
                       joePrice,
                       poolTVL * ((jlpBalance || 0) / (totalJlpSupply || 0))
-                    ).toFixed(5) +"%",
+                    ).toFixed(5) + "%",
                   ],
                   [
                     "Currented Boosted APR",
@@ -270,7 +309,8 @@ function App() {
                       selectedPool,
                       originalVeJoeBalance,
                       joePrice,
-                      poolTVL * ((unmodifiedJLPBalance || 0) / (totalJlpSupply || 0))
+                      poolTVL *
+                        ((unmodifiedJLPBalance || 0) / (totalJlpSupply || 0))
                     ).toFixed(5) + "%",
                   ],
                   [
