@@ -2,8 +2,10 @@
   color: black;
 }
 
-.App-header {
+body {
   background-color: #b4b8bb;
+}
+.App-header {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -53,7 +55,7 @@ body {
   font-family: Avenir;
 }
 
-body h6{
+body h6 {
   font-weight: lighter;
   margin: 5px;
 }
@@ -205,14 +207,12 @@ input:disabled {
 }
 
 .refresh-button {
-  background: #ffa50070;
-  color: #af6500;
-  font-weight: bold;
+  background: transparent;
+  color: #bbb;
   border: none;
   border-radius: 5px;
   padding: 5px 15px;
   margin-bottom: 5px;
-  margin-right: 10px;
   transform: translateY(-2px);
   cursor: pointer;
   float: right;

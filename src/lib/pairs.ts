@@ -4,11 +4,10 @@
  * The rest are stablecoins.
  */
 
-
 import { LpOption } from "./three/types";
 import { GraphQLClient, gql } from "graphql-request";
 import { Contract } from "ethers";
-import { LP_abi } from "./three";
+import LP_abi from "../lib/abi/JLP_abi.json";
 import { provider } from "./three";
 const client = new GraphQLClient(
   "https://api.thegraph.com/subgraphs/name/traderjoe-xyz/exchange",
@@ -17,18 +16,25 @@ const client = new GraphQLClient(
   }
 );
 /*  See methodology in JLPcontract.sol
-*   @param pool_data: LpOption[] struct defining characteristics of token pool
-*   @param amount0: input of textfield mapped to token0
-*   @param amount1: input of textfield mapped to token1
-*/
-export async function getIssuance(pool_data: LpOption["poolData"], bal: number) : Promise<{token0: number; token1: number;}> {
+ *   @param pool_data: LpOption[] struct defining characteristics of token pool
+ *   @param amount0: input of textfield mapped to token0
+ *   @param amount1: input of textfield mapped to token1
+ */
+export async function getIssuance(
+  pool_data: LpOption["poolData"],
+  bal: number
+): Promise<{ token0: number; token1: number }> {
   const contract = new Contract(pool_data.lpContract, LP_abi, provider);
   const reserves = await contract.getReserves();
-  
+
   // (JLPBalance / totalSupply / 2) * reserves[0] / token0dec
-  const token0 = ((bal / pool_data.totalSupply) * reserves[0]) / 10 ** Number.parseInt(pool_data.token0Decimals);
+  const token0 =
+    ((bal / pool_data.totalSupply) * reserves[0]) /
+    10 ** Number.parseInt(pool_data.token0Decimals);
   // (JLPBalance / totalSupply / 2) * reserves[1] / token1dec
-  const token1 = ((bal / pool_data.totalSupply) * reserves[1]) / 10 ** Number.parseInt(pool_data.token1Decimals);
+  const token1 =
+    ((bal / pool_data.totalSupply) * reserves[1]) /
+    10 ** Number.parseInt(pool_data.token1Decimals);
   console.log("Token0: " + Number.parseInt(pool_data.token0Decimals));
   console.log("Token1: " + token1);
   return { token0: token0, token1: token1 };
@@ -68,10 +74,14 @@ async function getPrices() {
     WBTCPromise,
   ]);
 
-  const BNB_WAVAX_Pair = await getPairPrice("0xeb8eb6300c53c3addbb7382ff6c6fbc4165b0742");
+  const BNB_WAVAX_Pair = await getPairPrice(
+    "0xeb8eb6300c53c3addbb7382ff6c6fbc4165b0742"
+  );
   const BNB = BNB_WAVAX_Pair * WAVAX;
 
-  const LINK_WAVAX_Pair = await getPairPrice("0x6f3a0c89f611ef5dc9d96650324ac633d02265d3");
+  const LINK_WAVAX_Pair = await getPairPrice(
+    "0x6f3a0c89f611ef5dc9d96650324ac633d02265d3"
+  );
   const LINK = LINK_WAVAX_Pair * WAVAX;
 
   // const MIM_WAVAX_Pair = await getPairPrice("0x781655d802670bba3c89aebaaea59d3182fd755d");
@@ -84,6 +94,5 @@ async function getPrices() {
     WBTC,
     BNB,
     LINK,
-    
   };
 }
