@@ -209,11 +209,11 @@ function App() {
                 [
                   [
                     "Pool share",
-                    `${(100 * (jlpBalance || 0)) / (totalJlpSupply || 0)}%`,
+                    `${((100 * (jlpBalance || 0)) / (totalJlpSupply || 0)).toFixed(5)}%`,
                   ],
                   [
                     "veJOE share",
-                    `${(100 * (veJoeBalance || 0)) / (totalVeJoeSupply || 0)}%`,
+                    `${((100 * (veJoeBalance || 0)) / (totalVeJoeSupply || 0)).toFixed(5)}%`,
                   ],
                   [
                     "Base APR (Joe Per Year)",
@@ -223,7 +223,7 @@ function App() {
                       totalAllocPoint,
                       jlpBalance,
                       selectedPool
-                    ),
+                    ).toFixed(5),
                   ],
                   [
                     "Currented Boosted APR (Joe Per Year)",
@@ -233,7 +233,7 @@ function App() {
                       unmodifiedJLPBalance,
                       selectedPool,
                       originalVeJoeBalance
-                    ),
+                    ).toFixed(5),
                   ],
                   [
                     "Estimated Boosted APR (Joe Per Year)",
@@ -243,7 +243,7 @@ function App() {
                       jlpBalance,
                       selectedPool,
                       veJoeBalance
-                    ),
+                    ).toFixed(5),
                     "Test",
                   ],
                 ].map(([label, value, tooltip]) => (
