@@ -29,16 +29,30 @@ export async function getIssuance(
 
   // (JLPBalance / totalSupply / 2) * reserves[0] / token0dec
   const token0 =
-    ((bal / pool_data.totalSupply) * reserves[0]) /
-    10 ** Number.parseInt(pool_data.token0Decimals);
+    ((bal / pool_data.totalSupply) * reserves[0]) / 10 ** Number.parseInt(pool_data.token0Decimals);
   // (JLPBalance / totalSupply / 2) * reserves[1] / token1dec
-  const token1 =
-    ((bal / pool_data.totalSupply) * reserves[1]) /
-    10 ** Number.parseInt(pool_data.token1Decimals);
-  console.log("Token0: " + Number.parseInt(pool_data.token0Decimals));
-  console.log("Token1: " + token1);
+  const token1 = ((bal / pool_data.totalSupply) * reserves[1]) / 10 ** Number.parseInt(pool_data.token1Decimals);
   return { token0: token0, token1: token1 };
 }
+
+export async function revertToJLP(pool_data: LpOption["poolData"], amount0: number, amount1: number) {
+  const contract = new Contract(pool_data.lpContract, LP_abi, provider);
+  const reserves = await contract.getReserves();
+  console.log(amount0);
+  console.log(amount1);
+  console.log(amount0 * (10 ** Number.parseInt(pool_data.token0Decimals)));
+  console.log(amount1 * (10 ** Number.parseInt(pool_data.token1Decimals)));
+
+  // (JLPBalance / totalSupply / 2) * reserves[0] / token0dec
+  const liquidity = Math.min(
+    (amount0 * (10 ** Number.parseInt(pool_data.token0Decimals))) / reserves[0],
+    (amount1 * (10 ** Number.parseInt(pool_data.token1Decimals))) / reserves[1]
+  );
+  
+  return liquidity * pool_data.totalSupply;
+}
+
+
 
 export async function getPairPrice(address: string) {
   const query = gql`
