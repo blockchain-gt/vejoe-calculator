@@ -5,7 +5,7 @@ import ERC20_abi from "../abi/ERC20_abi.json";
 import { BigNumber, Contract, getDefaultProvider } from "ethers";
 import { LpOption } from "./types";
 import { SECONDS_PER_YEAR } from "../constants";
-import { getPairPrice } from "../pairs";
+import { getJoePrice, getPairPrice } from "../pairs";
 
 export const wallet = "0x1E61E337B218b103D599a6C7495E959dB0A5d287";
 const bmc_contract_address = "0x4483f0b6e2F5486D06958C20f8C39A7aBe87bf8F";
@@ -129,16 +129,26 @@ export function getBaseAPR(
   totalJPS: BigNumber,
   totalAllocPoint: BigNumber,
   jlpBalance: number,
-  selectedPool: LpOption
+  selectedPool: LpOption,
+  joePrice: number,
+  posValue: number
 ) {
+  if (jlpBalance === 0) return 0;
+
   const poolJPS =
     //@ts-ignore
     (totalJPS * selectedPool?.poolData.allocPoint) / totalAllocPoint;
-
-  return (
-    (SECONDS_PER_YEAR * (poolJPS * jlpBalance * 0.6)) /
-    selectedPool.poolData.totalSupply
-  );
+    console.log()
+    console.log()
+    const rewardsPerSecond = ((poolJPS * jlpBalance * 0.6) / selectedPool.poolData.totalSupply) / 10e18;
+    console.log("rewardsPerSecond "+rewardsPerSecond);
+    const rewardsPerYear = rewardsPerSecond * SECONDS_PER_YEAR;
+    console.log("rewardsPerYear "+rewardsPerYear);
+    const rewardsPerYearUSD = rewardsPerYear * joePrice;
+    console.log("rewardsPerYearUSD "+rewardsPerYearUSD);
+    const APR = (rewardsPerYearUSD / posValue) * 100
+    console.log("APR "+APR);
+    return Number.isNaN(APR) ? 0 : APR;
 }
 
 export function getBoostedAPR(
@@ -146,16 +156,18 @@ export function getBoostedAPR(
   totalAllocPoint: BigNumber,
   jlpBalance: number,
   selectedPool: LpOption,
-  veJoeBalance: number
+  veJoeBalance: number,
+  joePrice: number,
+  posValue: number
 ) {
+  if (jlpBalance === 0) return 0;
   const poolJPS =
     //@ts-ignore
     (totalJPS * selectedPool?.poolData.allocPoint) / totalAllocPoint;
-
-  return (
-    SECONDS_PER_YEAR *
-    (((jlpBalance * veJoeBalance) ** 0.5 * poolJPS * 0.4) /
-      //@ts-ignore
-      selectedPool.poolData.totalFactor)
-  );
+  const numerator = (((jlpBalance * veJoeBalance) ** 0.5) * poolJPS * 0.4) / 10e9;
+  const JPS = numerator / selectedPool.poolData.totalFactor;
+  const JPY = JPS * SECONDS_PER_YEAR;
+  const rewardsPerYearUSD = JPY * joePrice;
+  const APR = (rewardsPerYearUSD / posValue) * 100;
+  return Number.isNaN(APR) ? 0 : APR;
 }

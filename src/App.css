@@ -4,6 +4,7 @@
 
 body {
   background-color: #b4b8bb;
+  font-family: "Helvectica";
 }
 .App-header {
   min-height: 100vh;
@@ -219,8 +220,8 @@ input:disabled {
 }
 
 .refresh-button {
-  background: transparent;
-  color: #bbb;
+  background: #edeeff;
+  color: black;
   border: none;
   border-radius: 5px;
   padding: 5px 15px;

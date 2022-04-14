@@ -62,14 +62,28 @@ export async function getPairPrice(address: string) {
         name
         token0Price
         token1Price
+        reserveUSD
         }
     }
     `;
   const response = await client.request(query);
+  console.log(response);
   return response;
 }
-
-async function getPrices() {
+const getJoePriceQueryDocument = gql`
+  query {
+    pairs(where: { id: "0x3bc40d4307cd946157447cd55d70ee7495ba6140" }) {
+      id
+      name
+      token1Price
+    }
+  }
+`;
+export const getJoePrice = async () => {
+  const response = await client.request(getJoePriceQueryDocument);
+  return response.pairs[0].token1Price;
+};
+async function getPrices() : Promise<{WAVAX: any; JOE: any; WETH: any; WBTC: any; BNB: any; LINK: any}> {
   const WAVAXPromise = getPairPrice(
     "0xf4003f4efbe8691b60249e6afbd307abe7758adb"
   );
@@ -100,7 +114,8 @@ async function getPrices() {
 
   // const MIM_WAVAX_Pair = await getPairPrice("0x781655d802670bba3c89aebaaea59d3182fd755d");
   // const MIM = MIM_WAVAX_Pair * WAVAX;
-
+    const USDC = 1;
+    const USDTe = 1;
   return {
     WAVAX,
     JOE,
@@ -108,5 +123,6 @@ async function getPrices() {
     WBTC,
     BNB,
     LINK,
+
   };
 }

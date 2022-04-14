@@ -19,6 +19,6 @@ export type LpOption = {
     token1Decimals: any;
     totalSupply: number;
     allocPoint: BigNumber;
-    totalFactor: BigNumber;
+    totalFactor: number;
   };
 };

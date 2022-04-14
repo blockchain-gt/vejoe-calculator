@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { BigNumber } from "ethers";
 import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/three/types";
-import { getIssuance, revertToJLP } from "./lib/pairs";
+import { getIssuance, getJoePrice, getPairPrice, revertToJLP } from "./lib/pairs";
 //import { ThirdwebProvider } from '@thirdweb-dev/react';
 
 function App() {
@@ -32,10 +32,12 @@ function App() {
   const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0); // editable number
   const [jlpIssuance, setJlpIssuance] = useState<number>(0);
   const [cardShown, setCardShown] = useState<boolean>(true);
-
+  const [poolTVL, setPoolTVL] = useState<number>(0);
   const [lpOptions, setLpOptions] = useState<LpOption[]>([]);
 
   const [selectedPool, setSelectedPool] = useState<LpOption | null>(null);
+  const [joePrice, setJoePrice] = useState<number>(0);
+  const [currentBoostedAPR, setCurrentBoostedAPR] = useState<number>(0);
   const getTotalJlpBalance = () => {
     return +jlpBalance + +jlpIssuance;
   };
@@ -51,6 +53,9 @@ function App() {
       setOriginalVeJoeBalance(balance / 10e18);
       setVeJoeBalance(balance / 10e18);
       setTotalVeJoeSupply(totalSupply / 10e18);
+      const price = await getJoePrice();
+      console.log("JOE:" + price);
+      setJoePrice(price);
     }
     getData();
   }, []);
@@ -61,6 +66,13 @@ function App() {
     setOriginalVeJoeBalance(balance / 10e18);
     setVeJoeBalance(balance / 10e18);
   };
+
+  const refreshTokens = async () => {
+    if (selectedPool === undefined) return;
+    const issuance = await getIssuance(selectedPool!.poolData, unmodifiedJLPBalance);
+    setAmount1(issuance["token0"]);
+    setAmount2(issuance["token1"]);
+  }
 
   useEffect(() => {
     async function getData() {
@@ -95,6 +107,7 @@ function App() {
         }
       );
 
+
     }
   }, [selectedPool]);
 
@@ -105,21 +118,14 @@ function App() {
           <div className="cb">
             <h3>Boosted Farm Calculator</h3>
             <div className="body">
-              <h6>{(selectedPool?.poolData.lpContract ?? "").toString()}</h6>
               <Dropdown
                 options={lpOptions}
-                onSelect={(item) => {
+                onSelect={async (item) => {
+                  if (selectedPool === item) return;
                   setSelectedPool(item);
+                  setPoolTVL((await getPairPrice(item.poolData.lpToken)).pairs[0].reserveUSD);
                 }}
               />
-              <div className="input">
-                <label htmlFor="">Wallet JLP Balance</label>
-                <input
-                  disabled
-                  type="number"
-                  value={(jlpBalance / 10e18).toFixed(20)}
-                />
-              </div>
               <div className="farm-input">
                 <img src={selectedPool?.images[0]} alt="" />
                 <div style={{ marginLeft: "10px" }}>
@@ -179,10 +185,6 @@ function App() {
                     //@ts-ignore
                     setVeJoeBalance(e.target.value);
                     //@ts-ignore
-                    setAmount1(e.target.value);
-                    const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, true);
-                    setAmount2(pair);
-                    setJlpBalance(await revertToJLP(selectedPool!.poolData, Number.parseFloat(e.target.value), pair));
                   }}
                 />
               </div>
@@ -217,33 +219,38 @@ function App() {
                   ],
                   [
                     "Base APR (Joe Per Year)",
-
                     getBaseAPR(
                       totalJPS,
                       totalAllocPoint,
                       jlpBalance,
-                      selectedPool
-                    ).toFixed(5),
+                      selectedPool,
+                      joePrice,
+                      poolTVL * ((jlpBalance || 0) / (totalJlpSupply || 0))
+                    ).toFixed(5) +"%",
                   ],
                   [
-                    "Currented Boosted APR (Joe Per Year)",
+                    "Currented Boosted APR",
                     getBoostedAPR(
                       totalJPS,
                       totalAllocPoint,
                       unmodifiedJLPBalance,
                       selectedPool,
-                      originalVeJoeBalance
-                    ).toFixed(5),
+                      originalVeJoeBalance,
+                      joePrice,
+                      poolTVL * ((unmodifiedJLPBalance || 0) / (totalJlpSupply || 0))
+                    ).toFixed(5) + "%",
                   ],
                   [
-                    "Estimated Boosted APR (Joe Per Year)",
+                    "Estimated Boosted APR",
                     getBoostedAPR(
                       totalJPS,
                       totalAllocPoint,
                       jlpBalance,
                       selectedPool,
-                      veJoeBalance
-                    ).toFixed(5),
+                      veJoeBalance,
+                      joePrice,
+                      poolTVL * ((jlpBalance || 0) / (totalJlpSupply || 0))
+                    ).toFixed(5) + "%",
                     "Test",
                   ],
                 ].map(([label, value, tooltip]) => (
