@@ -13,6 +13,12 @@ body {
   color: white;
 }
 
+.cb {
+  max-height: 95vh;
+  overflow: scroll;
+  display: relative;
+}
+
 .card {
   max-width: 600px;
   margin: auto;
