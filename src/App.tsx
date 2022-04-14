@@ -104,8 +104,8 @@ function App() {
     setAmount2(issuance["token1"]);
   };
 
+  // Run when new pool selected
   useEffect(() => {
-    //triggers when new pool selected
     async function getData() {
       setTotalJlpSupply(selectedPool!.poolData.totalSupply);
       const reservesPromise = getReserves(selectedPool!.poolData);
@@ -145,7 +145,6 @@ function App() {
                     style={{ width: "80%" }}
                     value={myWallet}
                     onChange={async (e) => {
-                      //@ts-ignore
                       setWallet(e.target.value);
                     }}
                   />
@@ -203,7 +202,6 @@ function App() {
                     type="number"
                     value={amount2}
                     onChange={async (e) => {
-                      //@ts-ignore
                       setAmount2(Number.parseFloat(e.target.value));
                       const pair = await returnPairPrice(
                         Number.parseFloat(e.target.value),
@@ -237,9 +235,7 @@ function App() {
                   type="number"
                   value={veJoeBalance}
                   onChange={async (e) => {
-                    //@ts-ignore
-                    setVeJoeBalance(e.target.value);
-                    //@ts-ignore
+                    setVeJoeBalance(Number(e.target.value));
                   }}
                 />
               </div>
@@ -250,8 +246,7 @@ function App() {
                   type="number"
                   value={totalVeJoeSupply}
                   onChange={async (e) => {
-                    //@ts-ignore
-                    setAmount2(e.target.value);
+                    setAmount2(Number(e.target.value));
                     const pair = await returnPairPrice(
                       Number.parseFloat(e.target.value),
                       selectedPool?.poolData.lpContract,
@@ -324,15 +319,10 @@ function App() {
                       joePrice,
                       poolTVL * ((jlpBalance || 0) / (totalJlpSupply || 0))
                     ).toFixed(5) + "%",
-                    "Test",
                   ],
                 ].map(([label, value]) => (
                   <div className="statbox">
-                    <p>
-                      {label}
-                      {/* {tooltip && <Tooltip text="test" />} */}
-                    </p>
-
+                    <p>{label}</p>
                     <p>{value}</p>
                   </div>
                 ))}
