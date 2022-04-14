@@ -35,18 +35,21 @@ function App() {
   const [jlpBalance, setJlpBalance] = useState<number>(0);
   const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0);
   const [jlpIssuance, setJlpIssuance] = useState<number>(0);
-  const [cardShown, setCardShown] = useState<boolean>(true);
   const [poolTVL, setPoolTVL] = useState<number>(0);
-  const [lpOptions, setLpOptions] = useState<LpOption[]>([]);
   const [poolReserves, setPoolReserves] = useState<number>(0);
   const [selectedPool, setSelectedPool] = useState<LpOption | null>(null);
   const [joePrice, setJoePrice] = useState<number>(0);
+
+  // Options shown in the dropdown
+  const [lpOptions, setLpOptions] = useState<LpOption[]>([]);
+
+  // The wallet of the user
+  const [wallet, setWallet] = useState<string>(defaultWallet);
 
   const getTotalJlpBalance = () => {
     return +jlpBalance + +jlpIssuance;
   };
 
-  const [wallet, setWallet] = useState<string>(defaultWallet);
   useEffect(() => {
     //on page load
     async function getData() {
@@ -127,7 +130,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <div className={`card relative ${cardShown ? "" : "hidden"}`}>
+        <div className="card relative">
           <div className="cb">
             <div className="titleRow">
               <h3>Boosted Farm Calculator</h3>
@@ -169,8 +172,6 @@ function App() {
                     type="number"
                     value={amount1}
                     onChange={async (e) => {
-                      //@ts-ignore
-                      console.log("Here");
                       setAmount1(Number.parseFloat(e.target.value));
                       const pair = await returnPairPrice(
                         Number.parseFloat(e.target.value),
