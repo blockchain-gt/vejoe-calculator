@@ -140,7 +140,7 @@ export function getBaseAPR(
     (totalJPS * selectedPool?.poolData.allocPoint) / totalAllocPoint;
     console.log()
     console.log()
-    const rewardsPerSecond = ((poolJPS * jlpBalance * 0.6) / selectedPool.poolData.totalSupply) / 10e18;
+    const rewardsPerSecond = ((poolJPS * jlpBalance * 0.6) / selectedPool.poolData.totalSupply) / 1e18;
     console.log("rewardsPerSecond "+rewardsPerSecond);
     const rewardsPerYear = rewardsPerSecond * SECONDS_PER_YEAR;
     console.log("rewardsPerYear "+rewardsPerYear);
@@ -164,7 +164,7 @@ export function getBoostedAPR(
   const poolJPS =
     //@ts-ignore
     (totalJPS * selectedPool?.poolData.allocPoint) / totalAllocPoint;
-  const numerator = (((jlpBalance * veJoeBalance) ** 0.5) * poolJPS * 0.4) / 10e9;
+  const numerator = (((jlpBalance * veJoeBalance) ** 0.5) * poolJPS * 0.4) / 1e9;
   const JPS = numerator / selectedPool.poolData.totalFactor;
   const JPY = JPS * SECONDS_PER_YEAR;
   const rewardsPerYearUSD = JPY * joePrice;
