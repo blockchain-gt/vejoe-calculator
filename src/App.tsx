@@ -16,7 +16,7 @@ import { BigNumber } from "ethers";
 import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/three/types";
 import { getIssuance, getJoePrice, getPairPrice, revertToJLP } from "./lib/pairs";
-//import { ThirdwebProvider } from '@thirdweb-dev/react';
+import { ThirdwebProvider } from '@thirdweb-dev/react';
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0); // editable, num
@@ -112,6 +112,7 @@ function App() {
   }, [selectedPool]);
 
   return (
+    <ThirdwebProvider desiredchainid={43114}>
     <div className="App">
       <header className="App-header">
         <div className={`card relative ${cardShown ? "" : "hidden"}`}>
@@ -126,6 +127,12 @@ function App() {
                   setPoolTVL((await getPairPrice(item.poolData.lpToken)).pairs[0].reserveUSD);
                 }}
               />
+              <button
+                    onClick={refreshTokens}
+                    className="refresh-button"
+                  >
+                    Refresh
+                  </button>
               <div className="farm-input">
                 <img src={selectedPool?.images[0]} alt="" />
                 <div style={{ marginLeft: "10px" }}>
@@ -268,6 +275,7 @@ function App() {
         </div>
       </header>
     </div>
+    </ThirdwebProvider>
   );
 }
 
