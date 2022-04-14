@@ -63,8 +63,8 @@ function App() {
       const options = lps.map((lp, i) => ({
         title: `${lp.token0Symbol}/${lp.token1Symbol}`,
         images: [
-          `/symbols/${lp.token0Symbol}.png`,
-          `/symbols/${lp.token1Symbol}.png`,
+          `/symbols/${lp.token0Symbol || "default"}.png`,
+          `/symbols/${lp.token1Symbol || "default"}.png`,
         ],
         index: i,
         poolData: lp,
