@@ -85,6 +85,7 @@ function App() {
     getData();
   }, [wallet]); // needs to change when the data is changeed
 
+  // TODO: needs to be in useCallback
   const refreshVeJoeBalance = async () => {
     const balance = await veJoeContract.balanceOf(wallet);
 
@@ -92,6 +93,7 @@ function App() {
     setVeJoeBalance(balance / 10e18);
   };
 
+  // TODO: needs to be in useCallback
   const refreshTokens = async () => {
     if (selectedPool === undefined) return;
     const issuance = await getIssuance(

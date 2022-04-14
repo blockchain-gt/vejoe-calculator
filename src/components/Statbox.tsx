@@ -25,13 +25,16 @@ export default function Statbox({
       [
         [
           "Pool share",
-          `${((100 * (jlpBalance || 0)) / (totalJlpSupply || 0)).toFixed(5)}%`,
+          `${((100 * (jlpBalance || 0)) / (totalJlpSupply || 0)).toPrecision(
+            3
+          )}%`,
         ],
         [
           "veJOE share",
-          `${((100 * (veJoeBalance || 0)) / (totalVeJoeSupply || 0)).toFixed(
-            5
-          )}%`,
+          `${(
+            (100 * (veJoeBalance || 0)) /
+            (totalVeJoeSupply || 0)
+          ).toPrecision(3)}%`,
         ],
         [
           "Base APR (Joe Per Year)",
@@ -42,7 +45,7 @@ export default function Statbox({
             selectedPool,
             joePrice,
             poolTVL * ((jlpBalance || 0) / (totalJlpSupply || 0))
-          ).toFixed(5) + "%",
+          ).toPrecision(3) + "%",
         ],
         [
           "Currented Boosted APR",
@@ -54,7 +57,7 @@ export default function Statbox({
             originalVeJoeBalance,
             joePrice,
             poolTVL * ((originalJLPBalance || 0) / (totalJlpSupply || 0))
-          ).toFixed(5) + "%",
+          ).toPrecision(3) + "%",
         ],
         [
           "Estimated Boosted APR",
@@ -66,7 +69,7 @@ export default function Statbox({
             veJoeBalance,
             joePrice,
             poolTVL * ((jlpBalance || 0) / (totalJlpSupply || 0))
-          ).toFixed(5) + "%",
+          ).toPrecision(3) + "%",
         ],
       ].map(([label, value]) => (
         <div className="statbox">
