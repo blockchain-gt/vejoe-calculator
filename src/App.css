@@ -53,6 +53,11 @@ body {
   font-family: Avenir;
 }
 
+body h6{
+  font-weight: lighter;
+  margin: 5px;
+}
+
 .card label {
   margin-top: 20px;
   margin-bottom: 4px;

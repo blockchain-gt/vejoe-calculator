@@ -3,6 +3,8 @@ import {
   getBoostedAPR,
   getLPs,
   getUserInfo,
+  getUserJLPBalance,
+  returnPairPrice,
   totalAllocPoint,
   totalJPS,
   veJoeContract,
@@ -10,9 +12,10 @@ import {
 } from "./lib/three";
 import "./App.css";
 import { useEffect, useState } from "react";
-
+import { BigNumber } from "ethers";
 import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/three/types";
+import { getIssuance } from "./lib/pairs";
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0); // editable, num
@@ -26,13 +29,15 @@ function App() {
   // JLP
   const [jlpBalance, setJlpBalance] = useState<number>(0); // editable number
   const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0); // editable number
-
+  const [jlpIssuance, setJlpIssuance] = useState<number>(0);
   const [cardShown, setCardShown] = useState<boolean>(true);
 
   const [lpOptions, setLpOptions] = useState<LpOption[]>([]);
 
   const [selectedPool, setSelectedPool] = useState<LpOption | null>(null);
-
+  const getTotalJlpBalance = () => {
+    return +jlpBalance + +jlpIssuance;
+  }
   useEffect(() => {
     async function getData() {
       const balancePromise = veJoeContract.balanceOf(wallet);
@@ -42,9 +47,9 @@ function App() {
         await totalSupplyPromise,
       ]);
 
-      setOriginalVeJoeBalance(balance / 1e18);
-      setVeJoeBalance(balance / 1e18);
-      setTotalVeJoeSupply(totalSupply / 1e18);
+      setOriginalVeJoeBalance(balance / 10e18);
+      setVeJoeBalance(balance / 10e18);
+      setTotalVeJoeSupply(totalSupply / 10e18);
     }
     getData();
   }, []);
@@ -52,9 +57,8 @@ function App() {
   const refreshVeJoeBalance = async () => {
     const balance = await veJoeContract.balanceOf(wallet);
 
-    setOriginalVeJoeBalance(balance / 1e18);
-
-    setVeJoeBalance(balance / 1e18);
+    setOriginalVeJoeBalance(balance / 10e18);
+    setVeJoeBalance(balance / 10e18);
   };
 
   useEffect(() => {
@@ -77,16 +81,21 @@ function App() {
     getData();
   }, []);
 
-  useEffect(() => {
+  useEffect( () => {
     if (selectedPool) {
       setTotalJlpSupply(selectedPool.poolData.totalSupply);
-      getUserInfo(selectedPool?.index, wallet, selectedPool?.poolData).then(
-        (bal) => {
+      getUserJLPBalance(selectedPool?.index, wallet, selectedPool?.poolData).then(
+        async (bal) => {
           setJlpBalance(bal);
+          const issuance = (await getIssuance(selectedPool.poolData, bal))
+          setAmount1(issuance["token0"]);
+          setAmount2(issuance["token1"]);
         }
       );
+
     }
   }, [selectedPool]);
+
 
   return (
     <div className="App">
@@ -94,13 +103,21 @@ function App() {
         <div className={`card relative ${cardShown ? "" : "hidden"}`}>
           <h3>Boosted Farm Calculator</h3>
           <div className="body">
+          <h6>{(selectedPool?.poolData.lpContract ?? "").toString()}</h6>
             <Dropdown
               options={lpOptions}
               onSelect={(item) => {
                 setSelectedPool(item);
               }}
             />
-
+            <div className="input">
+              <label htmlFor="">Wallet JLP Balance</label>
+              <input
+                disabled
+                type="number"
+                value={(jlpBalance / 10e18).toFixed(20)}
+              />
+            </div>
             <div className="farm-input">
               <img src={selectedPool?.images[0]} alt="" />
               <div style={{ marginLeft: "10px" }}>
@@ -108,9 +125,12 @@ function App() {
                 <input
                   type="number"
                   value={amount1}
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     //@ts-ignore
                     setAmount1(e.target.value);
+                    const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, true);
+                    setAmount2(pair);
+                    if (selectedPool === undefined) return;
                   }}
                 />
               </div>
@@ -122,14 +142,16 @@ function App() {
                 <input
                   type="number"
                   value={amount2}
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     //@ts-ignore
                     setAmount2(e.target.value);
+                    const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, false);
+                    setAmount1(pair);
+                    if (selectedPool === undefined) return;
                   }}
                 />
               </div>
             </div>
-
             <div className="input">
               <label htmlFor="">
                 veJOE Balance{" "}
