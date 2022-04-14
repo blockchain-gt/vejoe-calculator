@@ -44,10 +44,22 @@ async function getLP(pid: number) {
   let token0_contract = new Contract(token0, ERC20_abi, provider);
   let token1_contract = new Contract(token1, ERC20_abi, provider);
 
-  const [token0Symbol, token0Name, token0Decimals] = await Promise.all([
+  const [
+    token0Symbol,
+    token0Name,
+    token0Decimals,
+    token1Symbol,
+    token1Name,
+    token1Decimals,
+    reserves,
+  ] = await Promise.all([
     token0_contract.symbol(),
     token0_contract.name(),
     token0_contract.decimals(),
+    token1_contract.symbol(),
+    token1_contract.name(),
+    token1_contract.decimals(),
+    JLP_contract.getReserves(),
   ]);
 
   return {
@@ -60,12 +72,12 @@ async function getLP(pid: number) {
     token0Decimals,
     token1: token1,
     token1Contract: token1_contract,
-    token1Symbol: await token1_contract.symbol(),
-    token1Name: await token1_contract.name(),
-    token1Decimals: await token1_contract.decimals(),
+    token1Symbol,
+    token1Name,
+    token1Decimals,
     totalSupply: data.totalLpSupply,
     totalFactor: data.totalFactor,
-    reserves: await JLP_contract.getReserves(),
+    reserves,
     allocPoint: data.allocPoint,
   };
 }
