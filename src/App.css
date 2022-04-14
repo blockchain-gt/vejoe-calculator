@@ -172,11 +172,17 @@ body h6 {
   flex-direction: row;
   justify-content: space-between;
   padding: 0px 20px;
+  font-size: 16px;
+}
+
+.statbox p {
+  margin: 10px;
 }
 
 .statbox:last-child {
   background-color: #eeffee;
   border-radius: 10px;
+  font-weight: 500;
 }
 
 .input {
