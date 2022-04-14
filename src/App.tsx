@@ -23,14 +23,15 @@ import Statbox from "./components/Statbox";
 import RefreshButton from "./components/RefreshButton";
 
 function App() {
-  const [amount1, setAmount1] = useState<number>(0); // editable, num
-  const [amount2, setAmount2] = useState<number>(0); // editable, num
+  const [amount1, setAmount1] = useState<number>(0);
+  const [amount2, setAmount2] = useState<number>(0);
 
   // Balance, total supply, share
   const [veJoeBalance, setVeJoeBalance] = useState<number>(0);
   const [originalVeJoeBalance, setOriginalVeJoeBalance] = useState<number>(0);
   const [totalVeJoeSupply, setTotalVeJoeSupply] = useState<number>(0);
   const [originalJlpBalance, setOriginalJlpBalance] = useState<number>(0);
+
   // JLP
   const [jlpBalance, setJlpBalance] = useState<number>(0);
   const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0);
@@ -45,10 +46,6 @@ function App() {
 
   // The wallet of the user
   const [wallet, setWallet] = useState<string>(defaultWallet);
-
-  const getTotalJlpBalance = () => {
-    return +jlpBalance + +jlpIssuance;
-  };
 
   useEffect(() => {
     //on page load
@@ -112,8 +109,8 @@ function App() {
       const reservesPromise = getReserves(selectedPool!.poolData);
       const poolInfoPromise = getPoolInfo(selectedPool!.index, wallet);
       const [reserves, poolInfo] = await Promise.all([
-        await reservesPromise,
-        await poolInfoPromise,
+        reservesPromise,
+        poolInfoPromise,
       ]);
       setPoolReserves(reserves);
       setOriginalJlpBalance(poolInfo.amount);
@@ -167,9 +164,14 @@ function App() {
               </button>
 
               <div className="farm-input">
-                <img src={selectedPool?.images[0]} alt="" />
+                <img
+                  src={selectedPool?.images[0] || "/symbols/default.png"}
+                  alt={selectedPool?.title}
+                />
                 <div style={{ marginLeft: "10px" }}>
-                  <label htmlFor="">{selectedPool?.title.split("/")[0]}</label>
+                  <label htmlFor="">
+                    {selectedPool?.title.split("/")[0] || "Loading..."}
+                  </label>
                   <input
                     type="number"
                     value={amount1}
@@ -194,9 +196,14 @@ function App() {
                 </div>
               </div>
               <div className="farm-input">
-                <img src={selectedPool?.images[1]} alt="" />
+                <img
+                  src={selectedPool?.images[1] || "/symbols/default.png"}
+                  alt={selectedPool?.title}
+                />
                 <div style={{ marginLeft: "10px" }}>
-                  <label htmlFor="">{selectedPool?.title.split("/")[1]}</label>
+                  <label htmlFor="">
+                    {selectedPool?.title.split("/")[1] || "Loading..."}
+                  </label>
                   <input
                     type="number"
                     value={amount2}
@@ -212,7 +219,7 @@ function App() {
                         await revertToJLP(
                           selectedPool!.poolData,
                           pair,
-                          Number.parseFloat(e.target.value),
+                          Number(e.target.value),
                           poolReserves
                         )
                       );
@@ -241,7 +248,7 @@ function App() {
                   onChange={async (e) => {
                     setAmount2(Number(e.target.value));
                     const pair = await returnPairPrice(
-                      Number.parseFloat(e.target.value),
+                      Number(e.target.value),
                       selectedPool?.poolData.lpContract,
                       false
                     );
@@ -250,7 +257,7 @@ function App() {
                       await revertToJLP(
                         selectedPool!.poolData,
                         pair,
-                        Number.parseFloat(e.target.value),
+                        Number(e.target.value),
                         poolReserves
                       )
                     );
