@@ -58,7 +58,7 @@ body {
 
 body {
   font-size: 18px;
-  font-family: Avenir;
+  font-family: Avenir, Helvetica, sans-serif;
 }
 
 body h6 {
