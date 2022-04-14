@@ -1,15 +1,12 @@
 import {
-  getBaseAPR,
-  getBoostedAPR,
   getLPs,
   getPoolInfo,
   getReserves,
-  getUserJLPBalance,
   returnPairPrice,
   totalAllocPoint,
   totalJPS,
   veJoeContract,
-  wallet,
+  wallet as defaultWallet,
 } from "./lib/three";
 import "./App.css";
 import { useEffect, useState } from "react";
@@ -21,20 +18,22 @@ import {
   getPairPrice,
   revertToJLP,
 } from "./lib/three/index";
-import { userInfo } from "os";
+
+import Statbox from "./components/Statbox";
+import RefreshButton from "./components/RefreshButton";
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0); // editable, num
   const [amount2, setAmount2] = useState<number>(0); // editable, num
 
   // Balance, total supply, share
-  const [veJoeBalance, setVeJoeBalance] = useState<number>(0); // editable number
-  const [originalVeJoeBalance, setOriginalVeJoeBalance] = useState<number>(0); // editable number
-  const [totalVeJoeSupply, setTotalVeJoeSupply] = useState<number>(0); // editable number
-  const [unmodifiedJLPBalance, setUnmodified] = useState<number>(0);
+  const [veJoeBalance, setVeJoeBalance] = useState<number>(0);
+  const [originalVeJoeBalance, setOriginalVeJoeBalance] = useState<number>(0);
+  const [totalVeJoeSupply, setTotalVeJoeSupply] = useState<number>(0);
+  const [originalJlpBalance, setOriginalJlpBalance] = useState<number>(0);
   // JLP
-  const [jlpBalance, setJlpBalance] = useState<number>(0); // editable number
-  const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0); // editable number
+  const [jlpBalance, setJlpBalance] = useState<number>(0);
+  const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0);
   const [jlpIssuance, setJlpIssuance] = useState<number>(0);
   const [cardShown, setCardShown] = useState<boolean>(true);
   const [poolTVL, setPoolTVL] = useState<number>(0);
@@ -42,14 +41,12 @@ function App() {
   const [poolReserves, setPoolReserves] = useState<number>(0);
   const [selectedPool, setSelectedPool] = useState<LpOption | null>(null);
   const [joePrice, setJoePrice] = useState<number>(0);
-  const [currentBoostedAPR, setCurrentBoostedAPR] = useState<number>(0);
+
   const getTotalJlpBalance = () => {
     return +jlpBalance + +jlpIssuance;
   };
 
-  const [count, setCount] = useState(0);
-
-  const [myWallet, setWallet] = useState<string>(wallet);
+  const [wallet, setWallet] = useState<string>(defaultWallet);
   useEffect(() => {
     //on page load
     async function getData() {
@@ -80,11 +77,10 @@ function App() {
       setOriginalVeJoeBalance(balance / 10e18);
       setVeJoeBalance(balance / 10e18);
       setTotalVeJoeSupply(totalSupply / 10e18);
-      console.log("JOE:" + price);
       setJoePrice(price);
     }
     getData();
-  }, []);
+  }, [wallet]); // needs to change when the data is changeed
 
   const refreshVeJoeBalance = async () => {
     const balance = await veJoeContract.balanceOf(wallet);
@@ -97,7 +93,7 @@ function App() {
     if (selectedPool === undefined) return;
     const issuance = await getIssuance(
       selectedPool!.poolData,
-      unmodifiedJLPBalance,
+      originalJlpBalance,
       poolReserves
     );
     setAmount1(issuance["token0"]);
@@ -115,7 +111,7 @@ function App() {
         await poolInfoPromise,
       ]);
       setPoolReserves(reserves);
-      setUnmodified(poolInfo.amount);
+      setOriginalJlpBalance(poolInfo.amount);
       setJlpBalance(poolInfo.amount);
       const issuance = getIssuance(
         selectedPool!.poolData,
@@ -126,7 +122,7 @@ function App() {
       setAmount2(issuance["token1"]);
     }
     if (selectedPool) getData();
-  }, [selectedPool]);
+  }, [selectedPool, wallet]);
 
   return (
     <div className="App">
@@ -143,7 +139,7 @@ function App() {
                   <label htmlFor="">Address:</label>
                   <input
                     style={{ width: "80%" }}
-                    value={myWallet}
+                    value={wallet}
                     onChange={async (e) => {
                       setWallet(e.target.value);
                     }}
@@ -223,13 +219,7 @@ function App() {
               </div>
               <div className="input">
                 <label htmlFor="">
-                  veJOE Balance{" "}
-                  <button
-                    onClick={refreshVeJoeBalance}
-                    className="refresh-button"
-                  >
-                    Refresh
-                  </button>
+                  veJOE Balance <RefreshButton onClick={refreshVeJoeBalance} />
                 </label>
                 <input
                   type="number"
@@ -266,66 +256,21 @@ function App() {
               </div>
             </div>
             <footer>
-              {totalJPS &&
-                selectedPool?.poolData.allocPoint &&
-                totalAllocPoint &&
-                [
-                  [
-                    "Pool share",
-                    `${(
-                      (100 * (jlpBalance || 0)) /
-                      (totalJlpSupply || 0)
-                    ).toFixed(5)}%`,
-                  ],
-                  [
-                    "veJOE share",
-                    `${(
-                      (100 * (veJoeBalance || 0)) /
-                      (totalVeJoeSupply || 0)
-                    ).toFixed(5)}%`,
-                  ],
-                  [
-                    "Base APR (Joe Per Year)",
-                    getBaseAPR(
-                      totalJPS,
-                      totalAllocPoint,
-                      jlpBalance,
-                      selectedPool,
-                      joePrice,
-                      poolTVL * ((jlpBalance || 0) / (totalJlpSupply || 0))
-                    ).toFixed(5) + "%",
-                  ],
-                  [
-                    "Currented Boosted APR",
-                    getBoostedAPR(
-                      totalJPS,
-                      totalAllocPoint,
-                      unmodifiedJLPBalance,
-                      selectedPool,
-                      originalVeJoeBalance,
-                      joePrice,
-                      poolTVL *
-                        ((unmodifiedJLPBalance || 0) / (totalJlpSupply || 0))
-                    ).toFixed(5) + "%",
-                  ],
-                  [
-                    "Estimated Boosted APR",
-                    getBoostedAPR(
-                      totalJPS,
-                      totalAllocPoint,
-                      jlpBalance,
-                      selectedPool,
-                      veJoeBalance,
-                      joePrice,
-                      poolTVL * ((jlpBalance || 0) / (totalJlpSupply || 0))
-                    ).toFixed(5) + "%",
-                  ],
-                ].map(([label, value]) => (
-                  <div className="statbox">
-                    <p>{label}</p>
-                    <p>{value}</p>
-                  </div>
-                ))}
+              <Statbox
+                {...{
+                  totalJlpSupply,
+                  totalJPS,
+                  joePrice,
+                  veJoeBalance,
+                  selectedPool,
+                  totalAllocPoint,
+                  jlpBalance,
+                  poolTVL,
+                  totalVeJoeSupply,
+                  originalJLPBalance: originalJlpBalance,
+                  originalVeJoeBalance,
+                }}
+              />
             </footer>
           </div>
         </div>
