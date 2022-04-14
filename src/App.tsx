@@ -15,7 +15,8 @@ import { useEffect, useState } from "react";
 import { BigNumber } from "ethers";
 import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/three/types";
-import { getIssuance } from "./lib/pairs";
+import { getIssuance, revertToJLP } from "./lib/pairs";
+//import { ThirdwebProvider } from '@thirdweb-dev/react';
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0); // editable, num
@@ -25,7 +26,7 @@ function App() {
   const [veJoeBalance, setVeJoeBalance] = useState<number>(0); // editable number
   const [originalVeJoeBalance, setOriginalVeJoeBalance] = useState<number>(0); // editable number
   const [totalVeJoeSupply, setTotalVeJoeSupply] = useState<number>(0); // editable number
-
+  const [unmodifiedJLPBalance, setUnmodified] = useState<number>(0);
   // JLP
   const [jlpBalance, setJlpBalance] = useState<number>(0); // editable number
   const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0); // editable number
@@ -86,6 +87,7 @@ function App() {
       setTotalJlpSupply(selectedPool.poolData.totalSupply);
       getUserJLPBalance(selectedPool?.index, wallet, selectedPool?.poolData).then(
         async (bal) => {
+          setUnmodified(bal);
           setJlpBalance(bal);
           const issuance = (await getIssuance(selectedPool.poolData, bal))
           setAmount1(issuance["token0"]);
@@ -130,7 +132,7 @@ function App() {
                     setAmount1(e.target.value);
                     const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, true);
                     setAmount2(pair);
-                    if (selectedPool === undefined) return;
+                    setJlpBalance(await revertToJLP(selectedPool!.poolData, Number.parseFloat(e.target.value), pair));
                   }}
                 />
               </div>
@@ -147,7 +149,7 @@ function App() {
                     setAmount2(e.target.value);
                     const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, false);
                     setAmount1(pair);
-                    if (selectedPool === undefined) return;
+                    setJlpBalance(await revertToJLP(selectedPool!.poolData, pair, Number.parseFloat(e.target.value)));
                   }}
                 />
               </div>
@@ -213,7 +215,7 @@ function App() {
                   getBoostedAPR(
                     totalJPS,
                     totalAllocPoint,
-                    jlpBalance,
+                    unmodifiedJLPBalance,
                     selectedPool,
                     originalVeJoeBalance
                   ),
