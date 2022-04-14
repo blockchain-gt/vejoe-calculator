@@ -1,5 +1,4 @@
-import { BigNumber } from "ethers";
-import { Contract } from "ethers";
+import { BigNumber, Contract } from "ethers";
 export type LpOption = {
   title: string;
   images: string[];
