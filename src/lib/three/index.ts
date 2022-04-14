@@ -99,7 +99,9 @@ export async function getUserJLPBalance(
   wallet: string,
   pool_data: LpOption["poolData"]
 ) {
+  console.log(pid)
   let user_info = await bmc.userInfo(pid, wallet);
+  console.log(user_info);
   return user_info.amount;
 }
 

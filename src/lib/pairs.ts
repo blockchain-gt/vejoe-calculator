@@ -21,36 +21,17 @@ const client = new GraphQLClient(
 *   @param amount0: input of textfield mapped to token0
 *   @param amount1: input of textfield mapped to token1
 */
-export async function getIssuance(pool_data: LpOption["poolData"], amount0: number, amount1: number) {
-  const token0_name = pool_data.token0Symbol;
-  if (token0_name === "WTBC.e") {
-    amount0 *= 10e8; //WTBC.e is the only token that uses 8 decimals
-  } else if (token0_name === "USDT.e" || token0_name === "USDC" || token0_name === "USDC.e") {
-    amount0 *= 10e6; //Stablecoins use 6 decimals
-    amount0 = Math.round(amount0);
-  } else {
-    amount0 *= 10e18; //Normal coins use 18 decimals
-  }
-  const token1_name = pool_data.token1Symbol;
-  if (token1_name === "WTBC.e") {
-    amount1 *= 10e8; //WTBC.e is the only token that uses 8 decimals
-  } else if (token1_name === "USDT.e" || token1_name === "USDC" || token1_name === "USDC.e") {
-    amount1 *= 10e6; //Stablecoins use 6 decimals
-    amount1 = Math.round(amount1);
-  } else {
-    amount1 *= 10e18; //Normal coins use 18 decimals
-  }
+export async function getIssuance(pool_data: LpOption["poolData"], bal: number) : Promise<{token0: number; token1: number;}> {
   const contract = new Contract(pool_data.lpContract, LP_abi, provider);
   const reserves = await contract.getReserves();
-  const liquidity = Math.min(
-    amount0 / reserves[0],
-    amount1 / reserves[1]
-  )
-  console.log(amount0 / reserves[0]);
-  console.log(amount1 / reserves[1]);
-  console.log(pool_data.totalSupply.toString());
-  console.log((amount0 / reserves[0]) * pool_data.totalSupply);
-  return (liquidity * pool_data.totalSupply) / 10e18;
+  
+  // (JLPBalance / totalSupply / 2) * reserves[0] / token0dec
+  const token0 = ((bal / pool_data.totalSupply) * reserves[0]) / 10 ** Number.parseInt(pool_data.token0Decimals);
+  // (JLPBalance / totalSupply / 2) * reserves[1] / token1dec
+  const token1 = ((bal / pool_data.totalSupply) * reserves[1]) / 10 ** Number.parseInt(pool_data.token1Decimals);
+  console.log("Token0: " + Number.parseInt(pool_data.token0Decimals));
+  console.log("Token1: " + token1);
+  return { token0: token0, token1: token1 };
 }
 
 export async function getPairPrice(address: string) {

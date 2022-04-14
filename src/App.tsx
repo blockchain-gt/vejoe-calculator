@@ -81,14 +81,18 @@ function App() {
     getData();
   }, []);
 
-  useEffect(() => {
+  useEffect( () => {
     if (selectedPool) {
       setTotalJlpSupply(selectedPool.poolData.totalSupply);
       getUserJLPBalance(selectedPool?.index, wallet, selectedPool?.poolData).then(
-        (bal) => {
+        async (bal) => {
           setJlpBalance(bal);
+          const issuance = (await getIssuance(selectedPool.poolData, bal))
+          setAmount1(issuance["token0"]);
+          setAmount2(issuance["token1"]);
         }
       );
+
     }
   }, [selectedPool]);
 
@@ -111,7 +115,7 @@ function App() {
               <input
                 disabled
                 type="number"
-                value={jlpBalance}
+                value={(jlpBalance / 10e18).toFixed(20)}
               />
             </div>
             <div className="farm-input">
@@ -127,7 +131,6 @@ function App() {
                     const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, true);
                     setAmount2(pair);
                     if (selectedPool === undefined) return;
-                    setJlpIssuance(await getIssuance(selectedPool!.poolData, Number.parseFloat(e.target.value), pair));
                   }}
                 />
               </div>
@@ -145,26 +148,9 @@ function App() {
                     const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, false);
                     setAmount1(pair);
                     if (selectedPool === undefined) return;
-                    setJlpIssuance(await getIssuance(selectedPool!.poolData, pair, Number.parseFloat(e.target.value)));
                   }}
                 />
               </div>
-            </div>
-            <div className="input">
-              <label htmlFor="">Prospective JLP Issuance</label>
-              <input
-                disabled
-                type="number"
-                value={jlpIssuance.toFixed(20)}
-              />
-            </div>
-            <div className="input">
-              <label htmlFor="">Prospective JLP Balance</label>
-              <input
-                disabled
-                type="number"
-                value={getTotalJlpBalance().toFixed(20)}
-              />
             </div>
             <div className="input">
               <label htmlFor="">
