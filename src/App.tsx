@@ -38,7 +38,7 @@ function App() {
   const [selectedPool, setSelectedPool] = useState<LpOption | null>(null);
   const getTotalJlpBalance = () => {
     return +jlpBalance + +jlpIssuance;
-  }
+  };
   useEffect(() => {
     async function getData() {
       const balancePromise = veJoeContract.balanceOf(wallet);
@@ -68,8 +68,8 @@ function App() {
       const options = lps.map((lp, i) => ({
         title: `${lp.token0Symbol}/${lp.token1Symbol}`,
         images: [
-          `/symbols/${lp.token0Symbol}.png`,
-          `/symbols/${lp.token1Symbol}.png`,
+          `/symbols/${lp.token0Symbol || "default"}.png`,
+          `/symbols/${lp.token1Symbol || "default"}.png`,
         ],
         index: i,
         poolData: lp,
@@ -82,7 +82,7 @@ function App() {
     getData();
   }, []);
 
-  useEffect( () => {
+  useEffect(() => {
     if (selectedPool) {
       setTotalJlpSupply(selectedPool.poolData.totalSupply);
       getUserJLPBalance(selectedPool?.index, wallet, selectedPool?.poolData).then(
@@ -98,36 +98,86 @@ function App() {
     }
   }, [selectedPool]);
 
-
   return (
     <div className="App">
       <header className="App-header">
         <div className={`card relative ${cardShown ? "" : "hidden"}`}>
-          <h3>Boosted Farm Calculator</h3>
-          <div className="body">
-          <h6>{(selectedPool?.poolData.lpContract ?? "").toString()}</h6>
-            <Dropdown
-              options={lpOptions}
-              onSelect={(item) => {
-                setSelectedPool(item);
-              }}
-            />
-            <div className="input">
-              <label htmlFor="">Wallet JLP Balance</label>
-              <input
-                disabled
-                type="number"
-                value={(jlpBalance / 10e18).toFixed(20)}
+          <div className="cb">
+            <h3>Boosted Farm Calculator</h3>
+            <div className="body">
+              <h6>{(selectedPool?.poolData.lpContract ?? "").toString()}</h6>
+              <Dropdown
+                options={lpOptions}
+                onSelect={(item) => {
+                  setSelectedPool(item);
+                }}
               />
-            </div>
-            <div className="farm-input">
-              <img src={selectedPool?.images[0]} alt="" />
-              <div style={{ marginLeft: "10px" }}>
-                <label htmlFor="">{selectedPool?.title.split("/")[0]}</label>
+              <div className="input">
+                <label htmlFor="">Wallet JLP Balance</label>
+                <input
+                  disabled
+                  type="number"
+                  value={(jlpBalance / 10e18).toFixed(20)}
+                />
+              </div>
+              <div className="farm-input">
+                <img src={selectedPool?.images[0]} alt="" />
+                <div style={{ marginLeft: "10px" }}>
+                  <label htmlFor="">{selectedPool?.title.split("/")[0]}</label>
+                  <input
+                    type="number"
+                    value={amount1}
+                    onChange={async (e) => {
+                      //@ts-ignore
+                      setAmount1(e.target.value);
+                      const pair = await returnPairPrice(
+                        Number.parseFloat(e.target.value),
+                        selectedPool?.poolData.lpContract,
+                        true
+                      );
+                      setAmount2(pair);
+                      setJlpBalance(await revertToJLP(selectedPool!.poolData, Number.parseFloat(e.target.value), pair));
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="farm-input">
+                <img src={selectedPool?.images[1]} alt="" />
+                <div style={{ marginLeft: "10px" }}>
+                  <label htmlFor="">{selectedPool?.title.split("/")[1]}</label>
+                  <input
+                    type="number"
+                    value={amount2}
+                    onChange={async (e) => {
+                      //@ts-ignore
+                      setAmount2(e.target.value);
+                      const pair = await returnPairPrice(
+                        Number.parseFloat(e.target.value),
+                        selectedPool?.poolData.lpContract,
+                        false
+                      );
+                      setAmount1(pair);
+                      setJlpBalance(await revertToJLP(selectedPool!.poolData, pair, Number.parseFloat(e.target.value)))
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="input">
+                <label htmlFor="">
+                  veJOE Balance{" "}
+                  <button
+                    onClick={refreshVeJoeBalance}
+                    className="refresh-button"
+                  >
+                    Refresh
+                  </button>
+                </label>
                 <input
                   type="number"
-                  value={amount1}
+                  value={veJoeBalance}
                   onChange={async (e) => {
+                    //@ts-ignore
+                    setVeJoeBalance(e.target.value);
                     //@ts-ignore
                     setAmount1(e.target.value);
                     const pair = await returnPairPrice(Number.parseFloat(e.target.value), selectedPool?.poolData.lpContract, true);
@@ -136,14 +186,12 @@ function App() {
                   }}
                 />
               </div>
-            </div>
-            <div className="farm-input">
-              <img src={selectedPool?.images[1]} alt="" />
-              <div style={{ marginLeft: "10px" }}>
-                <label htmlFor="">{selectedPool?.title.split("/")[1]}</label>
+              <div className="input">
+                <label htmlFor="">Total veJOE Supply</label>
                 <input
+                  disabled
                   type="number"
-                  value={amount2}
+                  value={totalVeJoeSupply}
                   onChange={async (e) => {
                     //@ts-ignore
                     setAmount2(e.target.value);
@@ -154,94 +202,62 @@ function App() {
                 />
               </div>
             </div>
-            <div className="input">
-              <label htmlFor="">
-                veJOE Balance{" "}
-                <button
-                  onClick={refreshVeJoeBalance}
-                  className="refresh-button"
-                >
-                  Refresh
-                </button>
-              </label>
-              <input
-                type="number"
-                value={veJoeBalance}
-                onChange={(e) => {
-                  //@ts-ignore
-                  setVeJoeBalance(e.target.value);
-                  //@ts-ignore
-                }}
-              />
-            </div>
-            <div className="input">
-              <label htmlFor="">Total veJOE Supply</label>
-              <input
-                disabled
-                type="number"
-                value={totalVeJoeSupply}
-                onChange={(e) => {
-                  //@ts-ignore
-                  setTotalVeJoeSupply(e.target.value);
-                }}
-              />
-            </div>
+            <footer>
+              {totalJPS &&
+                selectedPool?.poolData.allocPoint &&
+                totalAllocPoint &&
+                [
+                  [
+                    "Pool share",
+                    `${(100 * (jlpBalance || 0)) / (totalJlpSupply || 0)}%`,
+                  ],
+                  [
+                    "veJOE share",
+                    `${(100 * (veJoeBalance || 0)) / (totalVeJoeSupply || 0)}%`,
+                  ],
+                  [
+                    "Base APR (Joe Per Year)",
+
+                    getBaseAPR(
+                      totalJPS,
+                      totalAllocPoint,
+                      jlpBalance,
+                      selectedPool
+                    ),
+                  ],
+                  [
+                    "Currented Boosted APR (Joe Per Year)",
+                    getBoostedAPR(
+                      totalJPS,
+                      totalAllocPoint,
+                      unmodifiedJLPBalance,
+                      selectedPool,
+                      originalVeJoeBalance
+                    ),
+                  ],
+                  [
+                    "Estimated Boosted APR (Joe Per Year)",
+                    getBoostedAPR(
+                      totalJPS,
+                      totalAllocPoint,
+                      jlpBalance,
+                      selectedPool,
+                      veJoeBalance
+                    ),
+                    "Test",
+                  ],
+                ].map(([label, value, tooltip]) => (
+                  <div className="statbox">
+                    <p>
+                      {label}
+                      {/* {tooltip && <Tooltip text="test" />} */}
+                    </p>
+
+                    <p>{value}</p>
+                  </div>
+                ))}
+            </footer>
           </div>
-          <footer>
-            {totalJPS &&
-              selectedPool?.poolData.allocPoint &&
-              totalAllocPoint &&
-              [
-                [
-                  "Pool share",
-                  `${(100 * (jlpBalance || 0)) / (totalJlpSupply || 0)}%`,
-                ],
-                [
-                  "veJOE share",
-                  `${(100 * (veJoeBalance || 0)) / (totalVeJoeSupply || 0)}%`,
-                ],
-                [
-                  "Base APR (Joe Per Year)",
-
-                  getBaseAPR(
-                    totalJPS,
-                    totalAllocPoint,
-                    jlpBalance,
-                    selectedPool
-                  ),
-                ],
-                [
-                  "Currented Boosted APR (Joe Per Year)",
-                  getBoostedAPR(
-                    totalJPS,
-                    totalAllocPoint,
-                    unmodifiedJLPBalance,
-                    selectedPool,
-                    originalVeJoeBalance
-                  ),
-                ],
-                [
-                  "Estimated Boosted APR (Joe Per Year)",
-                  getBoostedAPR(
-                    totalJPS,
-                    totalAllocPoint,
-                    jlpBalance,
-                    selectedPool,
-                    veJoeBalance
-                  ),
-                  "Test",
-                ],
-              ].map(([label, value, tooltip]) => (
-                <div className="statbox">
-                  <p>
-                    {label}
-                    {/* {tooltip && <Tooltip text="test" />} */}
-                  </p>
-
-                  <p>{value}</p>
-                </div>
-              ))}
-          </footer>
         </div>
       </header>
     </div>

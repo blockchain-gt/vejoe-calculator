@@ -2,13 +2,21 @@
   color: black;
 }
 
-.App-header {
+body {
   background-color: #b4b8bb;
+}
+.App-header {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 
   color: white;
+}
+
+.cb {
+  max-height: 95vh;
+  overflow: scroll;
+  display: relative;
 }
 
 .card {
@@ -50,10 +58,10 @@
 
 body {
   font-size: 18px;
-  font-family: Avenir;
+  font-family: Avenir, Helvetica, sans-serif;
 }
 
-body h6{
+body h6 {
   font-weight: lighter;
   margin: 5px;
 }
@@ -164,11 +172,17 @@ body h6{
   flex-direction: row;
   justify-content: space-between;
   padding: 0px 20px;
+  font-size: 16px;
+}
+
+.statbox p {
+  margin: 10px;
 }
 
 .statbox:last-child {
   background-color: #eeffee;
   border-radius: 10px;
+  font-weight: 500;
 }
 
 .input {
@@ -205,14 +219,12 @@ input:disabled {
 }
 
 .refresh-button {
-  background: #ffa50070;
-  color: #af6500;
-  font-weight: bold;
+  background: transparent;
+  color: #bbb;
   border: none;
   border-radius: 5px;
   padding: 5px 15px;
   margin-bottom: 5px;
-  margin-right: 10px;
   transform: translateY(-2px);
   cursor: pointer;
   float: right;
