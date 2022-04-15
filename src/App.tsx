@@ -151,6 +151,7 @@ function App() {
 
   return (
     <div className="App">
+      <img className="logo" src="/image 1.png" alt="Trader Joe Logo" />
       <header className="App-header">
         <div id="wallet">
           <button onClick={requestAccount}>Connect to MetaMask</button>
