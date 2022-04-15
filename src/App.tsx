@@ -166,7 +166,7 @@ function App() {
                 <div className="input" style={{ marginBottom: "10px" }}>
                   <label htmlFor="">Address</label>
                   <input
-                    type="number"
+                    type="text"
                     value={wallet}
                     onChange={async (e) => {
                       setWallet(e.target.value);
