@@ -7,6 +7,7 @@ import lpData from "../data/lps.json";
 import { BigNumber, Contract, getDefaultProvider } from "ethers";
 import { LpOption } from "./types";
 import { GraphQLClient, gql } from "graphql-request";
+import { type } from "os";
 
 //Provider
 const rpc = "https://api.avax.network/ext/bc/C/rpc";
@@ -86,6 +87,7 @@ export const getJoePrice = async () => {
 };
 
 export async function getPairPrice(address: string) {
+  if (typeof address === "undefined") return;
   const query = gql`
     query {
         pairs(where: {id: "${address.toLowerCase()}" }) {
@@ -106,9 +108,8 @@ export async function returnPairPrice(
   address: string,
   tokenOrder: boolean
 ) {
-  console.log(address, "address");
-
   const response = await getPairPrice(address);
+  if (typeof response === "undefined") return 0;
   if (tokenOrder) {
     return input * response["pairs"][0].token1Price;
   } else {

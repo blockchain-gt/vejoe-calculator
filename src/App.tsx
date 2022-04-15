@@ -21,6 +21,7 @@ import {
 
 import Statbox from "./components/Statbox";
 import RefreshButton from "./components/RefreshButton";
+declare var window: any
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0);
@@ -92,9 +93,9 @@ function App() {
   };
 
   // TODO: needs to be in useCallback
-  const refreshTokens = async () => {
+  const refreshTokens = () => {
     if (selectedPool === undefined) return;
-    const issuance = await getIssuance(
+    const issuance = getIssuance(
       selectedPool!.poolData,
       originalJlpBalance,
       poolReserves
@@ -132,15 +133,34 @@ function App() {
       setCardShown(true);
     }, 500);
   }, []);
+  async function requestAccount() {
+    console.log("Requesting account");
+
+    if (window.ethereum) {
+      console.log("detected");
+      try {
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        })
+        setWallet(accounts[0]);
+      } catch (e) {
+
+      }
+    } else {
+      console.log("not detected")
+    }
+  }
 
   return (
     <div className="App">
       <header className="App-header">
+      <div id="wallet">
+                <button onClick={requestAccount}>Connect to MetaMask</button>
+      </div>
         <div className={`card relative ${!cardShown ? "hidden" : ""}`}>
           <div className="cb">
             <div className="titleRow">
               <h3>Boosted Farm Calculator</h3>
-              <div id="wallet"></div>
               <button
                 className="close-button"
                 onClick={() => setCardShown(false)}
@@ -164,7 +184,9 @@ function App() {
             <div className="body">
               <div className="farm-input">
                 <div className="input" style={{ marginBottom: "10px" }}>
+                <div id="top-label-refresh">
                   <label htmlFor="">Address</label>
+                </div>
                   <input
                     type="text"
                     value={wallet}
@@ -185,33 +207,36 @@ function App() {
                   );
                 }}
               />
-
+              <div id="top-label-refresh">
+              <label htmlFor="" className="tokenLabel">
+                {selectedPool?.title.split("/")[0] || "Loading..."}
+              </label>
+              <RefreshButton onClick={refreshTokens}/>
+              </div>
               <div className="farm-input">
-                <img
-                  src={selectedPool?.images[0] || "/symbols/default.png"}
-                  alt={selectedPool?.title}
-                />
-
-                <div style={{ marginLeft: "10px" }}>
-                  <label htmlFor="">
-                    {selectedPool?.title.split("/")[0] || "Loading..."}
-                  </label>
-                  <RefreshButton onClick={refreshTokens} />
+                <div className="_img">
+                  <img
+                    src={selectedPool?.images[0] || "/symbols/default.png"}
+                    alt={selectedPool?.title}
+                  />
+                </div>
+                <div className="_input">
                   <input
                     type="number"
                     value={amount1}
                     onChange={async (e) => {
-                      setAmount1(Number.parseFloat(e.target.value));
+                      const amount1 = Number.parseFloat(e.target.value);
+                      setAmount1(amount1);
                       const pair = await returnPairPrice(
-                        Number.parseFloat(e.target.value),
-                        selectedPool?.poolData.lpContract,
+                        amount1,
+                        selectedPool?.poolData.lpToken,
                         true
                       );
                       setAmount2(pair);
                       setJlpBalance(
-                        await revertToJLP(
+                        revertToJLP(
                           selectedPool!.poolData,
-                          Number.parseFloat(e.target.value),
+                          amount1,
                           pair,
                           poolReserves
                         )
@@ -220,23 +245,28 @@ function App() {
                   />
                 </div>
               </div>
-              <div className="farm-input">
-                <img
-                  src={selectedPool?.images[1] || "/symbols/default.png"}
-                  alt={selectedPool?.title}
-                />
-                <div style={{ marginLeft: "10px" }}>
-                  <label htmlFor="">
+              <div id="top-label-refresh">
+              <label htmlFor="" className="tokenLabel">
                     {selectedPool?.title.split("/")[1] || "Loading..."}
                   </label>
+              </div>
+              <div className="farm-input">
+                <div className="_img">
+                  <img
+                  src={selectedPool?.images[1] || "/symbols/default.png"}
+                  alt={selectedPool?.title}
+                  />
+                </div>
+                <div className="_input">
                   <input
                     type="number"
                     value={amount2}
                     onChange={async (e) => {
-                      setAmount2(Number.parseFloat(e.target.value));
+                      const amount2 = Number.parseFloat(e.target.value);
+                      setAmount2(amount2);
                       const pair = await returnPairPrice(
-                        Number.parseFloat(e.target.value),
-                        selectedPool?.poolData.lpContract,
+                        amount2,
+                        selectedPool?.poolData.lpToken,
                         false
                       );
                       setAmount1(pair);
@@ -244,7 +274,7 @@ function App() {
                         await revertToJLP(
                           selectedPool!.poolData,
                           pair,
-                          Number(e.target.value),
+                          amount2,
                           poolReserves
                         )
                       );
@@ -253,9 +283,12 @@ function App() {
                 </div>
               </div>
               <div className="input">
+                <div id="top-label-refresh">
                 <label htmlFor="">
-                  veJOE Balance <RefreshButton onClick={refreshVeJoeBalance} />
+                  veJOE Balance
                 </label>
+                <RefreshButton onClick={refreshVeJoeBalance} />
+                </div>
                 <input
                   type="number"
                   value={veJoeBalance}
@@ -265,7 +298,9 @@ function App() {
                 />
               </div>
               <div className="input">
+              <div id="top-label-refresh">
                 <label htmlFor="">Total veJOE Supply</label>
+                </div>
                 <input
                   disabled
                   type="number"
