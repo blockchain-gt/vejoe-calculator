@@ -21,7 +21,7 @@ import {
 
 import Statbox from "./components/Statbox";
 import RefreshButton from "./components/RefreshButton";
-declare var window: any
+declare var window: any;
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0);
@@ -67,8 +67,8 @@ function App() {
       const options = lps.map((lp, i) => ({
         title: `${lp.token0Symbol}/${lp.token1Symbol}`,
         images: [
-          `/symbols/${lp.token0Symbol.toUpperCase() || "default"}.png`,
-          `/symbols/${lp.token1Symbol.toUpperCase() || "default"}.png`,
+          `/tokens/${lp.token0Symbol.toUpperCase() || "default"}.png`,
+          `/tokens/${lp.token1Symbol.toUpperCase() || "default"}.png`,
         ],
         index: i,
         poolData: lp,
@@ -141,22 +141,20 @@ function App() {
       try {
         const accounts = await window.ethereum.request({
           method: "eth_requestAccounts",
-        })
+        });
         setWallet(accounts[0]);
-      } catch (e) {
-
-      }
+      } catch (e) {}
     } else {
-      console.log("not detected")
+      console.log("not detected");
     }
   }
 
   return (
     <div className="App">
       <header className="App-header">
-      <div id="wallet">
-                <button onClick={requestAccount}>Connect to MetaMask</button>
-      </div>
+        <div id="wallet">
+          <button onClick={requestAccount}>Connect to MetaMask</button>
+        </div>
         <div className={`card relative ${!cardShown ? "hidden" : ""}`}>
           <div className="cb">
             <div className="titleRow">
@@ -184,9 +182,9 @@ function App() {
             <div className="body">
               <div className="farm-input">
                 <div className="input" style={{ marginBottom: "10px" }}>
-                <div id="top-label-refresh">
-                  <label htmlFor="">Address</label>
-                </div>
+                  <div id="top-label-refresh">
+                    <label htmlFor="">Address</label>
+                  </div>
                   <input
                     type="text"
                     value={wallet}
@@ -208,15 +206,15 @@ function App() {
                 }}
               />
               <div id="top-label-refresh">
-              <label htmlFor="" className="tokenLabel">
-                {selectedPool?.title.split("/")[0] || "Loading..."}
-              </label>
-              <RefreshButton onClick={refreshTokens}/>
+                <label htmlFor="" className="tokenLabel">
+                  {selectedPool?.title.split("/")[0] || "Loading..."}
+                </label>
+                <RefreshButton onClick={refreshTokens} />
               </div>
               <div className="farm-input">
                 <div className="_img">
                   <img
-                    src={selectedPool?.images[0] || "/symbols/default.png"}
+                    src={selectedPool?.images[0] || "/tokens/default.png"}
                     alt={selectedPool?.title}
                   />
                 </div>
@@ -246,15 +244,15 @@ function App() {
                 </div>
               </div>
               <div id="top-label-refresh">
-              <label htmlFor="" className="tokenLabel">
-                    {selectedPool?.title.split("/")[1] || "Loading..."}
-                  </label>
+                <label htmlFor="" className="tokenLabel">
+                  {selectedPool?.title.split("/")[1] || "Loading..."}
+                </label>
               </div>
               <div className="farm-input">
                 <div className="_img">
                   <img
-                  src={selectedPool?.images[1] || "/symbols/default.png"}
-                  alt={selectedPool?.title}
+                    src={selectedPool?.images[1] || "/tokens/default.png"}
+                    alt={selectedPool?.title}
                   />
                 </div>
                 <div className="_input">
@@ -284,10 +282,8 @@ function App() {
               </div>
               <div className="input">
                 <div id="top-label-refresh">
-                <label htmlFor="">
-                  veJOE Balance
-                </label>
-                <RefreshButton onClick={refreshVeJoeBalance} />
+                  <label htmlFor="">veJOE Balance</label>
+                  <RefreshButton onClick={refreshVeJoeBalance} />
                 </div>
                 <input
                   type="number"
@@ -298,8 +294,8 @@ function App() {
                 />
               </div>
               <div className="input">
-              <div id="top-label-refresh">
-                <label htmlFor="">Total veJOE Supply</label>
+                <div id="top-label-refresh">
+                  <label htmlFor="">Total veJOE Supply</label>
                 </div>
                 <input
                   disabled
