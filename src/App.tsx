@@ -159,19 +159,18 @@ function App() {
                   );
                 }}
               />
-              <button onClick={refreshTokens} className="refresh-button">
-                Refresh
-              </button>
 
               <div className="farm-input">
                 <img
                   src={selectedPool?.images[0] || "/symbols/default.png"}
                   alt={selectedPool?.title}
                 />
+
                 <div style={{ marginLeft: "10px" }}>
                   <label htmlFor="">
                     {selectedPool?.title.split("/")[0] || "Loading..."}
                   </label>
+                  <RefreshButton onClick={refreshVeJoeBalance} />
                   <input
                     type="number"
                     value={amount1}
