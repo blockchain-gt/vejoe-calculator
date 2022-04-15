@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useClickAway } from "react-use";
-import { LpOption } from "../lib/three/types";
+import { LpOption } from "../lib/web3/types";
 
 export default function Dropdown({
   options,
@@ -35,6 +35,7 @@ export default function Dropdown({
   }, []);
   return (
     <div ref={bodyRef}>
+      <label htmlFor="">Pool</label>
       <div className="dropdown-button">
         <Row
           title={selected?.title}

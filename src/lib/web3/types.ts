@@ -7,12 +7,12 @@ export type LpOption = {
     lpToken: any;
     lpContract: any;
     token0: any;
-    token0Contract: Contract;
+
     token0Symbol: any;
     token0Name: any;
     token0Decimals: any;
     token1: any;
-    token1Contract: Contract,
+
     token1Symbol: any;
     token1Name: any;
     token1Decimals: any;

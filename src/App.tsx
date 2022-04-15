@@ -7,17 +7,17 @@ import {
   totalJPS,
   veJoeContract,
   wallet as defaultWallet,
-} from "./lib/three";
+} from "./lib/web3";
 import "./App.css";
 import { useEffect, useState } from "react";
 import Dropdown from "./components/Dropdown";
-import { LpOption } from "./lib/three/types";
+import { LpOption } from "./lib/web3/types";
 import {
   getIssuance,
   getJoePrice,
   getPairPrice,
   revertToJLP,
-} from "./lib/three/index";
+} from "./lib/web3/index";
 
 import Statbox from "./components/Statbox";
 import RefreshButton from "./components/RefreshButton";
@@ -35,7 +35,6 @@ function App() {
   // JLP
   const [jlpBalance, setJlpBalance] = useState<number>(0);
   const [totalJlpSupply, setTotalJlpSupply] = useState<number>(0);
-  const [jlpIssuance, setJlpIssuance] = useState<number>(0);
   const [poolTVL, setPoolTVL] = useState<number>(0);
   const [poolReserves, setPoolReserves] = useState<number>(0);
   const [selectedPool, setSelectedPool] = useState<LpOption | null>(null);
@@ -46,6 +45,8 @@ function App() {
 
   // The wallet of the user
   const [wallet, setWallet] = useState<string>(defaultWallet);
+
+  const [cardShown, setCardShown] = useState<boolean>(false);
 
   useEffect(() => {
     //on page load
@@ -126,19 +127,44 @@ function App() {
     if (selectedPool) getData();
   }, [selectedPool, wallet]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setCardShown(true);
+    }, 500);
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
-        <div className="card relative">
+        <div className={`card relative ${!cardShown ? "hidden" : ""}`}>
           <div className="cb">
             <div className="titleRow">
               <h3>Boosted Farm Calculator</h3>
               <div id="wallet"></div>
+              <button
+                className="close-button"
+                onClick={() => setCardShown(false)}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="sc-bbmXgH dlqmhF"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
             </div>
             <div className="body">
               <div className="farm-input">
                 <div style={{ marginBottom: "15px", width: "100%" }}>
-                  <label htmlFor="">Address:</label>
+                  <label htmlFor="">Address</label>
                   <input
                     style={{ width: "80%" }}
                     value={wallet}
@@ -150,12 +176,12 @@ function App() {
               </div>
               <Dropdown
                 options={lpOptions}
-                onSelect={async (item) => {
-                  if (selectedPool === item) return;
-                  setSelectedPool(item);
+                onSelect={async (selectedItem) => {
+                  if (selectedPool === selectedItem || !selectedItem) return;
+                  setSelectedPool(selectedItem);
                   setPoolTVL(
-                    (await getPairPrice(item.poolData.lpToken)).pairs[0]
-                      .reserveUSD
+                    (await getPairPrice(selectedItem.poolData?.lpToken))
+                      .pairs[0].reserveUSD
                   );
                 }}
               />
@@ -173,7 +199,7 @@ function App() {
                   <label htmlFor="">
                     {selectedPool?.title.split("/")[0] || "Loading..."}
                   </label>
-                  <RefreshButton onClick={refreshVeJoeBalance} />
+                  <RefreshButton onClick={refreshTokens} />
                   <input
                     type="number"
                     value={amount1}

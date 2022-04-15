@@ -1,4 +1,4 @@
-import { getBaseAPR, getBoostedAPR } from "../lib/three";
+import { getBaseAPR, getBoostedAPR } from "../lib/web3";
 
 interface Props {
   [key: string]: any;
