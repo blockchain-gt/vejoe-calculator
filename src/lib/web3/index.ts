@@ -7,7 +7,6 @@ import lpData from "../data/lps.json";
 import { BigNumber, Contract, getDefaultProvider } from "ethers";
 import { LpOption } from "./types";
 import { GraphQLClient, gql } from "graphql-request";
-import { type } from "os";
 
 //Provider
 const rpc = "https://api.avax.network/ext/bc/C/rpc";
@@ -21,7 +20,7 @@ export const veJoeContract = new Contract(veJOE_addr, veJOE_abi, provider);
 const bmc_contract_address = "0x4483f0b6e2F5486D06958C20f8C39A7aBe87bf8F";
 const bmc = new Contract(bmc_contract_address, bmc_abi, provider);
 
-export const wallet = "0x1E61E337B218b103D599a6C7495E959dB0A5d287";
+export const wallet = "0x0000000000000000000000000000000000000000";
 const SECONDS_PER_YEAR = 31536000;
 
 const client = new GraphQLClient(
