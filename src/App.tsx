@@ -65,8 +65,8 @@ function App() {
       const options = lps.map((lp, i) => ({
         title: `${lp.token0Symbol}/${lp.token1Symbol}`,
         images: [
-          `/symbols/${lp.token0Symbol || "default"}.png`,
-          `/symbols/${lp.token1Symbol || "default"}.png`,
+          `/symbols/${lp.token0Symbol.toUpperCase() || "default"}.png`,
+          `/symbols/${lp.token1Symbol.toUpperCase() || "default"}.png`,
         ],
         index: i,
         poolData: lp,
@@ -162,8 +162,11 @@ function App() {
 
               <div className="farm-input">
                 <img
-                  src={selectedPool?.images[0] || "/symbols/default.png"}
-                  alt={selectedPool?.title}
+                  src={
+                    selectedPool?.images[0].toUpperCase() ||
+                    "/symbols/default.png"
+                  }
+                  alt={selectedPool?.title.toUpperCase()}
                 />
 
                 <div style={{ marginLeft: "10px" }}>
@@ -196,7 +199,10 @@ function App() {
               </div>
               <div className="farm-input">
                 <img
-                  src={selectedPool?.images[1] || "/symbols/default.png"}
+                  src={
+                    selectedPool?.images[1].toUpperCase() ||
+                    "/symbols/default.png"
+                  }
                   alt={selectedPool?.title}
                 />
                 <div style={{ marginLeft: "10px" }}>

@@ -34,7 +34,7 @@ export default function Dropdown({
     });
   }, []);
   return (
-    <div>
+    <div ref={bodyRef}>
       <div className="dropdown-button">
         <Row
           title={selected?.title}
@@ -45,10 +45,7 @@ export default function Dropdown({
         />
       </div>
 
-      <div
-        ref={bodyRef}
-        className={`dropdown-body ${dropdownOpen ? "" : "hidden"}`}
-      >
+      <div className={`dropdown-body ${dropdownOpen ? "" : "hidden"}`}>
         {options.map((option) => {
           return (
             <Row
