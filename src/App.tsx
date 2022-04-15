@@ -56,10 +56,10 @@ function App() {
       const joePricePromise = getJoePrice();
 
       const [balance, totalSupply, lps, price] = await Promise.all([
-        await balancePromise,
-        await totalSupplyPromise,
-        await lpsPromise,
-        await joePricePromise,
+        balancePromise,
+        totalSupplyPromise,
+        lpsPromise,
+        joePricePromise,
       ]);
 
       const options = lps.map((lp, i) => ({
