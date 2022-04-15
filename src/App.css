@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200&display=swap");
 * {
   color: black;
-  font-family: 'Inter', sans-serif;
+  font-family: Avenir, "Inter", sans-serif;
 }
-
 body {
   background-color: #b4b8bb;
-  font-family: "Helvectica";
+  font-family: Avenir, "Inter", sans-serif;
+  font-size: 18px;
 }
 
 .titleRow {
@@ -92,11 +92,6 @@ body {
   border: 1px solid lightgray;
   border-radius: 5px;
   background-color: #eee;
-}
-
-body {
-  font-size: 18px;
-  font-family: Avenir, Helvetica, sans-serif;
 }
 
 body h6 {
@@ -219,8 +214,8 @@ body h6 {
   right: 0px;
 }
 #top-label-refresh label {
-  position:absolute;
-  bottom:0px;
+  position: absolute;
+  bottom: 0px;
   margin-bottom: 0px;
 }
 ._img {
