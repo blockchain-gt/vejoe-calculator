@@ -93,9 +93,9 @@ function App() {
   };
 
   // TODO: needs to be in useCallback
-  const refreshTokens = async () => {
+  const refreshTokens = () => {
     if (selectedPool === undefined) return;
-    const issuance = await getIssuance(
+    const issuance = getIssuance(
       selectedPool!.poolData,
       originalJlpBalance,
       poolReserves
@@ -184,7 +184,9 @@ function App() {
             <div className="body">
               <div className="farm-input">
                 <div className="input" style={{ marginBottom: "10px" }}>
+                <div id="top-label-refresh">
                   <label htmlFor="">Address</label>
+                </div>
                   <input
                     type="text"
                     value={wallet}
@@ -205,18 +207,20 @@ function App() {
                   );
                 }}
               />
-
+              <div id="top-label-refresh">
+              <label htmlFor="" className="tokenLabel">
+                {selectedPool?.title.split("/")[0] || "Loading..."}
+              </label>
+              <RefreshButton onClick={refreshTokens}/>
+              </div>
               <div className="farm-input">
-                <img
-                  src={selectedPool?.images[0] || "/symbols/default.png"}
-                  alt={selectedPool?.title}
-                />
-
-                <div style={{ marginLeft: "10px" }}>
-                  <label htmlFor="">
-                    {selectedPool?.title.split("/")[0] || "Loading..."}
-                  </label>
-                  <RefreshButton onClick={refreshTokens} />
+                <div className="_img">
+                  <img
+                    src={selectedPool?.images[0] || "/symbols/default.png"}
+                    alt={selectedPool?.title}
+                  />
+                </div>
+                <div className="_input">
                   <input
                     type="number"
                     value={amount1}
@@ -241,15 +245,19 @@ function App() {
                   />
                 </div>
               </div>
-              <div className="farm-input">
-                <img
-                  src={selectedPool?.images[1] || "/symbols/default.png"}
-                  alt={selectedPool?.title}
-                />
-                <div style={{ marginLeft: "10px" }}>
-                  <label htmlFor="">
+              <div id="top-label-refresh">
+              <label htmlFor="" className="tokenLabel">
                     {selectedPool?.title.split("/")[1] || "Loading..."}
                   </label>
+              </div>
+              <div className="farm-input">
+                <div className="_img">
+                  <img
+                  src={selectedPool?.images[1] || "/symbols/default.png"}
+                  alt={selectedPool?.title}
+                  />
+                </div>
+                <div className="_input">
                   <input
                     type="number"
                     value={amount2}
@@ -275,9 +283,12 @@ function App() {
                 </div>
               </div>
               <div className="input">
+                <div id="top-label-refresh">
                 <label htmlFor="">
-                  veJOE Balance <RefreshButton onClick={refreshVeJoeBalance} />
+                  veJOE Balance
                 </label>
+                <RefreshButton onClick={refreshVeJoeBalance} />
+                </div>
                 <input
                   type="number"
                   value={veJoeBalance}
@@ -287,7 +298,9 @@ function App() {
                 />
               </div>
               <div className="input">
+              <div id="top-label-refresh">
                 <label htmlFor="">Total veJOE Supply</label>
+                </div>
                 <input
                   disabled
                   type="number"

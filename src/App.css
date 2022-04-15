@@ -87,7 +87,7 @@ body {
 .card input,
 .card select {
   padding: 8px 10px;
-  min-width: 450px;
+  min-width: 80%;
 
   border: 1px solid lightgray;
   border-radius: 5px;
@@ -109,6 +109,10 @@ body h6 {
   margin-bottom: 4px;
   font-weight: 300;
   color: gray;
+}
+
+.tokenLabel {
+  margin-left: 44px;
 }
 
 .hidden {
@@ -191,14 +195,44 @@ body h6 {
 .farm-input {
   z-index: 0;
   display: flex;
-  position: relative;
-  margin-top: 10px;
+  flex-direction: row;
+  margin-right: 0px;
+}
+.farm-input input {
+  width: 97%;
+}
+.farm-input img {
+  height: 34px;
+  border-radius: 99999px;
+  vertical-align: bottom;
 }
 
-.farm-input img {
-  height: 30px;
-  border-radius: 99999px;
-  transform: translateY(26px);
+#top-label-refresh {
+  margin: 5px 0px;
+  height: 31px;
+  vertical-align: bottom;
+  position: relative;
+}
+#top-label-refresh .refresh-button {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+#top-label-refresh label {
+  position:absolute;
+  bottom:0px;
+  margin-bottom: 0px;
+}
+._img {
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+._input {
+  flex-grow: 1;
+  margin-left: 10px;
 }
 
 .card footer {
@@ -262,7 +296,6 @@ input:disabled {
   border: none;
   border-radius: 5px;
   padding: 5px 15px;
-  margin-bottom: 5px;
   transform: translateY(-2px);
   cursor: pointer;
   float: right;

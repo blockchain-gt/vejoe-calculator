@@ -35,7 +35,9 @@ export default function Dropdown({
   }, []);
   return (
     <div ref={bodyRef}>
+      <div id="top-label-refresh">
       <label htmlFor="">Pool</label>
+      </div>
       <div className="dropdown-button">
         <Row
           title={selected?.title}
