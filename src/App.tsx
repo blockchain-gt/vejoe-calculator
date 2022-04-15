@@ -21,6 +21,7 @@ import {
 
 import Statbox from "./components/Statbox";
 import RefreshButton from "./components/RefreshButton";
+declare var window: any
 
 function App() {
   const [amount1, setAmount1] = useState<number>(0);
@@ -132,15 +133,34 @@ function App() {
       setCardShown(true);
     }, 500);
   }, []);
+  async function requestAccount() {
+    console.log("Requesting account");
+
+    if (window.ethereum) {
+      console.log("detected");
+      try {
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        })
+        setWallet(accounts[0]);
+      } catch (e) {
+
+      }
+    } else {
+      console.log("not detected")
+    }
+  }
 
   return (
     <div className="App">
       <header className="App-header">
+      <div id="wallet">
+                <button onClick={requestAccount}>Connect to MetaMask</button>
+      </div>
         <div className={`card relative ${!cardShown ? "hidden" : ""}`}>
           <div className="cb">
             <div className="titleRow">
               <h3>Boosted Farm Calculator</h3>
-              <div id="wallet"></div>
               <button
                 className="close-button"
                 onClick={() => setCardShown(false)}
@@ -201,17 +221,18 @@ function App() {
                     type="number"
                     value={amount1}
                     onChange={async (e) => {
-                      setAmount1(Number.parseFloat(e.target.value));
+                      const amount1 = Number.parseFloat(e.target.value);
+                      setAmount1(amount1);
                       const pair = await returnPairPrice(
-                        Number.parseFloat(e.target.value),
-                        selectedPool?.poolData.lpContract,
+                        amount1,
+                        selectedPool?.poolData.lpToken,
                         true
                       );
                       setAmount2(pair);
                       setJlpBalance(
-                        await revertToJLP(
+                        revertToJLP(
                           selectedPool!.poolData,
-                          Number.parseFloat(e.target.value),
+                          amount1,
                           pair,
                           poolReserves
                         )
@@ -233,10 +254,11 @@ function App() {
                     type="number"
                     value={amount2}
                     onChange={async (e) => {
-                      setAmount2(Number.parseFloat(e.target.value));
+                      const amount2 = Number.parseFloat(e.target.value);
+                      setAmount2(amount2);
                       const pair = await returnPairPrice(
-                        Number.parseFloat(e.target.value),
-                        selectedPool?.poolData.lpContract,
+                        amount2,
+                        selectedPool?.poolData.lpToken,
                         false
                       );
                       setAmount1(pair);
@@ -244,7 +266,7 @@ function App() {
                         await revertToJLP(
                           selectedPool!.poolData,
                           pair,
-                          Number(e.target.value),
+                          amount2,
                           poolReserves
                         )
                       );

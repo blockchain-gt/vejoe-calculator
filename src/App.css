@@ -15,18 +15,37 @@ body {
   vertical-align: bottom;
 }
 
+.titleRow h3 {
+  margin-left: 40px;
+  padding-top: 30px;
+  padding-bottom: 10px;
+  width: 80%;
+}
+
 #wallet {
   margin-bottom: 10px;
-  flex-grow: 1;
+  float: right;
+  position: absolute;
+  right: 10px;
+  top: 10px;
   justify-content: right;
   margin-right: auto;
+}
+
+#wallet button {
+  padding: 12px;
+  background-color: #7408f8;
+  color: white;
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
 }
 
 .App-header {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
+  padding-top: 0px;
   color: white;
 }
 
@@ -53,13 +72,13 @@ body {
 }
 
 .card h3 {
-  padding: 30px 40px 10px 40px;
   font-size: 1.5rem;
   font-weight: 200;
 }
 
 .card .body {
   padding: 20px 40px;
+  padding-top: 0px;
   background-color: #f9f9ff;
 }
 
@@ -272,4 +291,5 @@ input:disabled {
   border: none;
   margin-right: 20px;
   cursor: pointer;
+  padding-top: 20px;
 }
