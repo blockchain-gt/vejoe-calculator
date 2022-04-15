@@ -188,11 +188,8 @@ function App() {
 
               <div className="farm-input">
                 <img
-                  src={
-                    selectedPool?.images[0].toUpperCase() ||
-                    "/symbols/default.png"
-                  }
-                  alt={selectedPool?.title.toUpperCase()}
+                  src={selectedPool?.images[0] || "/symbols/default.png"}
+                  alt={selectedPool?.title}
                 />
 
                 <div style={{ marginLeft: "10px" }}>
@@ -225,10 +222,7 @@ function App() {
               </div>
               <div className="farm-input">
                 <img
-                  src={
-                    selectedPool?.images[1].toUpperCase() ||
-                    "/symbols/default.png"
-                  }
+                  src={selectedPool?.images[1] || "/symbols/default.png"}
                   alt={selectedPool?.title}
                 />
                 <div style={{ marginLeft: "10px" }}>
