@@ -163,10 +163,10 @@ function App() {
             </div>
             <div className="body">
               <div className="farm-input">
-                <div style={{ marginBottom: "15px", width: "100%" }}>
+                <div className="input" style={{ marginBottom: "10px" }}>
                   <label htmlFor="">Address</label>
                   <input
-                    style={{ width: "80%" }}
+                    type="number"
                     value={wallet}
                     onChange={async (e) => {
                       setWallet(e.target.value);
