@@ -23,6 +23,7 @@ const bmc = new Contract(bmc_contract_address, bmc_abi, provider);
 export const wallet = "0x0000000000000000000000000000000000000000";
 const SECONDS_PER_YEAR = 31536000;
 
+
 const client = new GraphQLClient(
   "https://api.thegraph.com/subgraphs/name/traderjoe-xyz/exchange",
   {
@@ -250,4 +251,8 @@ export function getBoostedAPR(
   const rewardsPerYearUSD = JPY * joePrice;
   const APR = (rewardsPerYearUSD / posValue) * 100;
   return Number.isNaN(APR) ? 0 : APR;
+}
+
+export async function getInitialLpTVL() {
+  return (await getPairPrice(lpData[0].lpToken)).pairs[0].reserveUSD
 }

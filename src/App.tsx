@@ -1,4 +1,5 @@
 import {
+  getInitialLpTVL,
   getLPs,
   getPoolInfo,
   getReserves,
@@ -16,7 +17,7 @@ import {
   getIssuance,
   getJoePrice,
   getPairPrice,
-  revertToJLP,
+  revertToJLP
 } from "./lib/web3/index";
 
 import Statbox from "./components/Statbox";
@@ -76,6 +77,7 @@ function App() {
 
       setLpOptions(options);
       setSelectedPool(options[0]);
+      setPoolTVL(await getInitialLpTVL());
       setOriginalVeJoeBalance(balance / 10e18);
       setVeJoeBalance(balance / 10e18);
       setTotalVeJoeSupply(totalSupply / 10e18);
