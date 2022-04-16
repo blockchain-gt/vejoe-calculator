@@ -228,7 +228,7 @@ export function getBaseAPR(
   const rewardsPerYear = rewardsPerSecond * SECONDS_PER_YEAR;
   const rewardsPerYearUSD = rewardsPerYear * joePrice;
   const APR = (rewardsPerYearUSD / posValue) * 100;
-  return Number.isNaN(APR) ? 0 : APR;
+  return Number.isNaN(APR) || !Number.isFinite(APR) ? 0 : APR;
 }
 
 export function getBoostedAPR(
