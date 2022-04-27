@@ -10,7 +10,7 @@ import {
   wallet as defaultWallet,
 } from "./lib/web3";
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Dropdown from "./components/Dropdown";
 import { LpOption } from "./lib/web3/types";
 import {
@@ -150,7 +150,6 @@ function App() {
       console.log("not detected");
     }
   }
-
   return (
     <div className="App">
       <img className="logo" src="/image 1.png" alt="Trader Joe Logo" />
@@ -264,6 +263,7 @@ function App() {
                     value={amount2}
                     onChange={async (e) => {
                       const amount2 = Number.parseFloat(e.target.value);
+                      console.log(amount2);
                       setAmount2(amount2);
                       const pair = await returnPairPrice(
                         amount2,
@@ -272,7 +272,7 @@ function App() {
                       );
                       setAmount1(pair);
                       setJlpBalance(
-                        await revertToJLP(
+                        revertToJLP(
                           selectedPool!.poolData,
                           pair,
                           amount2,

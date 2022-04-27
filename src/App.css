@@ -42,6 +42,9 @@ body {
   border: none;
   font-weight: bold;
 }
+#wallet button:hover {
+  cursor: pointer;
+}
 
 .App-header {
   min-height: 100vh;
